@@ -1,9 +1,62 @@
-#[derive(Debug, PartialEq, Copy, Clone)]
+// FIXME: Import utils ?!?
+// The 'Token' struct is used to represent vectors, points, and colors.
+// TODO: Document the public API
+#[derive(Debug, Copy, Clone)]
 pub struct Tuple {
-    pub x : f64,
-    pub y : f64,
-    pub z : f64,
-    pub w : f64
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+    pub w: f64
+}
+
+impl Tuple {
+    pub fn point(x: f64, y: f64, z: f64) -> Tuple {
+        Tuple {x, y, z, w: 1f64}
+    }
+    
+    pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
+        Tuple {x, y, z, w: 0f64}
+    }
+    
+    pub fn is_point(&self) -> bool {
+        self.w == 1f64
+    }
+
+    pub fn is_vector(&self) -> bool {
+        self.w == 0f64
+    }
+
+    pub fn magnitude(&self) -> f64 {
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+    }
+
+    pub fn normalize(&self) -> Tuple {
+        let mag = self.magnitude();
+        Tuple { x: self.x / mag, y: self.y / mag, z: self.z / mag, w: self.w }
+    }
+
+    pub fn dot_product(&a: &Tuple, &b: &Tuple) -> f64 {
+        a.x * b.x + 
+        a.y * b.y +
+        a.z * b.z
+    }
+
+    pub fn cross_product(&a: &Tuple, &b: &Tuple) -> Tuple {
+        Tuple::vector(
+            a.y * b.z - a.z * b.y,
+            a.z * b.x - a.x * b.z,
+            a.x * b.y - a.y * b.x
+        )
+    }
+}
+
+impl PartialEq for Tuple {
+    fn eq(&self, other: &Self) -> bool {
+        super::utils::approx_eq(self.x, other.x) &&
+        super::utils::approx_eq(self.y, other.y) &&
+        super::utils::approx_eq(self.z, other.z) &&
+        super::utils::approx_eq(self.w, other.w)
+    }
 }
 
 impl std::ops::Add for Tuple {
@@ -73,47 +126,6 @@ impl std::ops::Div<f64> for Tuple {
     }
 }
 
-
-impl Tuple {
-    pub fn point(x: f64, y: f64, z: f64) -> Tuple {
-        Tuple {x, y, z, w: 1f64}
-    }
-    
-    pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
-        Tuple {x, y, z, w: 0f64}
-    }
-    
-    pub fn is_point(&self) -> bool {
-        self.w == 1f64
-    }
-
-    pub fn is_vector(&self) -> bool {
-        self.w == 0f64
-    }
-
-    pub fn magnitude(&self) -> f64 {
-        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
-    }
-
-    pub fn normalize(&self) -> Tuple {
-        let mag = self.magnitude();
-        Tuple { x: self.x / mag, y: self.y / mag, z: self.z / mag, w: self.w }
-    }
-
-    pub fn dot_product(&a: &Tuple, &b: &Tuple) -> f64 {
-        a.x * b.x + 
-        a.y * b.y +
-        a.z * b.z
-    }
-
-    pub fn cross_product(&a: &Tuple, &b: &Tuple) -> Tuple {
-        Tuple::vector(
-            a.y * b.z - a.z * b.y,
-            a.z * b.x - a.x * b.z,
-            a.x * b.y - a.y * b.x
-        )
-    }
-}
 
 #[cfg(test)]
 mod tests {

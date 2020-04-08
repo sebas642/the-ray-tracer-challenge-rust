@@ -1,4 +1,6 @@
-mod tuple; 
+mod color;
+mod tuple;
+mod utils; 
 
 fn main() {
     println!("Hello, world!");
