@@ -2,14 +2,14 @@
 
 This the a partial implementation of [The Ray Tracer Challenge](https://pragprog.com/book/jbtracer/the-ray-tracer-challenge) book using Rust.
 
-This is a side project used to learn the Rust programming language.
+This is a side project used to learn the Rust programming language. Lots of improvements could be made to improve documentation, robustness, performance, and readability.
 
 ## Chapters
 
 - [x] Chapter 1 - Tuples, Points, and Vectors
 - [x] Chapter 2 - Drawing on a Canvas
 - [X] Chapter 3 - Matrices
-- [ ] Chapter 4 - Matrix Transformations
+- [X] Chapter 4 - Matrix Transformations
 - [ ] Chapter 5 - Ray-Sphere Intersections
 - [ ] Chapter 6 - Light and Shading
 - [ ] Chapter 7 - Making a Scene

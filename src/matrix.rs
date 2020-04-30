@@ -2,7 +2,7 @@ use super::tuple::*;
 // FIXME: Document public API
 
 const MAX_MATRIX_SIZE: usize = 4*4;
-const MATRIX_IDENTITY: Matrix = Matrix {rows: 4, columns: 4, data: 
+pub const MATRIX_IDENTITY: Matrix = Matrix {rows: 4, columns: 4, data: 
     [1., 0., 0., 0.,
     0., 1., 0., 0.,
     0., 0., 1., 0.,
