@@ -53,7 +53,6 @@ impl std::ops::Sub for Color {
     }
 }
 
-
 impl std::ops::Mul<f64> for Color {
     type Output = Self;
 
