@@ -18,7 +18,7 @@ pub const BLUE: Color = Color {r: 0.0, g: 0.0, b: 1.0};
 impl Color {
     pub fn new(r: f64, g: f64, b: f64) -> Color {
         Color {r, g, b}
-    }    
+    }
 }
 
 impl PartialEq for Color {
@@ -57,7 +57,7 @@ impl std::ops::Mul<f64> for Color {
     type Output = Self;
 
     fn mul(self, factor: f64) -> Self {
-        Self { 
+        Self {
             r: self.r * factor,
             g: self.g * factor,
             b: self.b * factor,
@@ -70,7 +70,7 @@ impl std::ops::Mul<Color> for Color {
 
     fn mul(self, other: Color) -> Self {
         // This is called the Hadamard product (or Schur product)
-        Self { 
+        Self {
             r: self.r * other.r,
             g: self.g * other.g,
             b: self.b * other.b,

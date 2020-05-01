@@ -1,8 +1,5 @@
 use std::f64;
 use super::matrix::{Matrix, MATRIX_IDENTITY};
-use super::tuple::Tuple;
-
-// FIXME: Document public API
 
 pub fn transforms(list: &[Matrix]) -> Matrix {
     let mut m = MATRIX_IDENTITY;
@@ -69,6 +66,7 @@ pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tuple::Tuple;
 
     #[test]
     fn multiplying_by_a_translation_matrix() {
@@ -247,10 +245,10 @@ mod tests {
 
         let p2 = r * p;
         assert_eq!(Tuple::point(1., -1., 0.), p2);
-        
+
         let p3 = s * p2;
         assert_eq!(Tuple::point(5., -5., 0.), p3);
-        
+
         let p4 = t * p3;
         assert_eq!(Tuple::point(15., 0., 7.), p4);
     }

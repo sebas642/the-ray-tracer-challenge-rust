@@ -2,7 +2,7 @@ use super::tuple::*;
 // FIXME: Document public API
 
 const MAX_MATRIX_SIZE: usize = 4*4;
-pub const MATRIX_IDENTITY: Matrix = Matrix {rows: 4, columns: 4, data: 
+pub const MATRIX_IDENTITY: Matrix = Matrix {rows: 4, columns: 4, data:
     [1., 0., 0., 0.,
     0., 1., 0., 0.,
     0., 0., 1., 0.,
@@ -22,7 +22,7 @@ impl Matrix {
 
     pub fn new_with_values(rows: usize, columns: usize, values: &[f64]) -> Matrix {
         let mut m = Matrix{rows, columns, data: [0.; MAX_MATRIX_SIZE]};
-        
+
         // Copy matrix values (there must be a cleaner way to do this!?)
         for i in 0..MAX_MATRIX_SIZE {
             let val = values.get(i);
@@ -56,7 +56,7 @@ impl Matrix {
     }
 
     pub fn determinant(&self) -> f64 {
-        if self.columns == 2 && self.columns == 2 {
+        if self.rows == 2 && self.columns == 2 {
             return self.get(0,0) * self.get(1,1) - self.get(1,0) * self.get(0,1);
         }
 
@@ -114,6 +114,12 @@ impl Matrix {
     }
 }
 
+impl Default for Matrix {
+    fn default() -> Self {
+        MATRIX_IDENTITY
+    }
+}
+
 impl std::ops::Mul<&Matrix> for Matrix {
     type Output = Self;
 
@@ -153,7 +159,7 @@ impl PartialEq for Matrix {
         if self.rows != other.rows || self.columns != other.columns {
             return false;
         }
-        
+
         for i in 0..self.rows * self.columns {
             if !super::utils::approx_eq(self.data[i], other.data[i]) {
                 return false;
@@ -171,7 +177,7 @@ mod tests {
     #[test]
     fn constructing_and_inspecting_a_4x4_matrix() {
         let values = [
-            1., 2., 3., 4., 
+            1., 2., 3., 4.,
             5.5, 6.5, 7.5, 8.5,
             9., 10., 11., 12.,
             13.5, 14.5, 15.5, 16.5];
@@ -190,7 +196,7 @@ mod tests {
     #[test]
     fn constructing_and_inspecting_a_3x3_matrix() {
         let values = [
-            -3., 5., 0., 
+            -3., 5., 0.,
             1., -2., -7.,
             0., 1., 1.];
         let m = Matrix::new_with_values(3, 3, &values);
@@ -198,13 +204,13 @@ mod tests {
 
         assert_eq!(m.get(0, 0), -3.);
         assert_eq!(m.get(1, 1), -2.);
-        assert_eq!(m.get(2, 2), 1.);    
+        assert_eq!(m.get(2, 2), 1.);
     }
 
     #[test]
     fn constructing_and_inspecting_a_2x2_matrix() {
         let values = [
-            -3., 5., 
+            -3., 5.,
             1., -2.];
         let m = Matrix::new_with_values(2, 2, &values);
         println!("{:?}", m);
@@ -218,20 +224,20 @@ mod tests {
     #[test]
     fn matrix_equality_with_identical_matrices() {
         let values = [
-            1., 2., 3., 4., 
+            1., 2., 3., 4.,
             5., 6., 7., 8.,
             9., 8., 7., 6.,
             5., 4., 3., 2.];
         let m1 = Matrix::new_with_values(4, 4, &values);
         let m2 = Matrix::new_with_values(4, 4, &values);
-        
+
         assert_eq!(m1, m2);
     }
 
     #[test]
     fn matrix_equality_with_different_matrices() {
         let values = [
-            1., 2., 3., 4., 
+            1., 2., 3., 4.,
             5., 6., 7., 8.,
             9., 8., 7., 6.,
             5., 4., 3., 2.];
@@ -245,14 +251,14 @@ mod tests {
     #[test]
     fn multiplying_two_matrices() {
         let m1_values = [
-            1., 2., 3., 4., 
+            1., 2., 3., 4.,
             5., 6., 7., 8.,
             9., 8., 7., 6.,
             5., 4., 3., 2.];
         let m1 = Matrix::new_with_values(4, 4, &m1_values);
 
         let m2_values = [
-            -2., 1., 2., 3., 
+            -2., 1., 2., 3.,
             3., 2., 1., -1.,
             4., 3., 6., 5.,
             1., 2., 7., 8.];
@@ -263,14 +269,14 @@ mod tests {
             44., 54., 114., 108.,
             40., 58., 110., 102.,
             16., 26., 46., 42.];
-        
-        assert_eq!(Matrix::new_with_values(4, 4, &mult_values), m1 * &m2); 
+
+        assert_eq!(Matrix::new_with_values(4, 4, &mult_values), m1 * &m2);
     }
 
     #[test]
     fn matrix_multiplied_by_a_tuple() {
         let values = [
-            1., 2., 3., 4., 
+            1., 2., 3., 4.,
             2., 4., 4., 2.,
             8., 6., 4., 1.,
             0., 0., 0., 1.];
@@ -284,7 +290,7 @@ mod tests {
     #[test]
     fn multiplying_a_matrix_by_the_identity_matrix() {
         let values = [
-            0., 1., 2., 4., 
+            0., 1., 2., 4.,
             1., 2., 4., 8.,
             2., 4., 8., 16.,
             4., 8., 16., 32.];
@@ -297,19 +303,19 @@ mod tests {
     #[test]
     fn transposing_a_matrix() {
         let source = [
-            0., 9., 3., 0., 
+            0., 9., 3., 0.,
             9., 8., 0., 8.,
             1., 8., 5., 3.,
             0., 0., 5., 8.];
         let m1 = Matrix::new_with_values(4, 4, &source);
-        
+
         let transposed = [
-            0., 9., 1., 0., 
+            0., 9., 1., 0.,
             9., 8., 8., 0.,
             3., 0., 5., 5.,
             0., 8., 3., 8.];
         let m2 = Matrix::new_with_values(4, 4, &transposed);
- 
+
         assert_eq!(m2, m1.transpose());
     }
 
@@ -322,17 +328,17 @@ mod tests {
     #[test]
     fn calculating_the_determinant_of_a_2x2_matrix() {
         let values = [
-            1., 5., 
+            1., 5.,
             -3., 2.];
         let m = Matrix::new_with_values(2, 2, &values);
- 
+
         assert_eq!(17., m.determinant());
     }
 
     #[test]
     fn a_submatrix_of_a_3x3_matrix_is_a_2x2_matrix() {
         let values = [
-            1., 5., 0., 
+            1., 5., 0.,
             -3., 2., 7.,
             0., 6., -3.];
         let m = Matrix::new_with_values(3, 3, &values);
@@ -348,7 +354,7 @@ mod tests {
     #[test]
     fn a_submatrix_of_a_4x4_matrix_is_a_3x3_matrix() {
         let values = [
-            -6., 1., 1., 6., 
+            -6., 1., 1., 6.,
             -8., 5., 8., 6.,
             -1., 0., 8., 2.,
             -7., 1., -1., 1.];
@@ -366,7 +372,7 @@ mod tests {
     #[test]
     fn calculating_a_minor_of_a_3x3_matrix() {
         let values = [
-            3., 5., 0., 
+            3., 5., 0.,
             2., -1., -7.,
             6., -1., 5.];
         let m = Matrix::new_with_values(3, 3, &values);
@@ -379,7 +385,7 @@ mod tests {
     #[test]
     fn calculating_a_cofactor_of_a_3x3_matrix() {
         let values = [
-            3., 5., 0., 
+            3., 5., 0.,
             2., -1., -7.,
             6., -1., 5.];
         let m = Matrix::new_with_values(3, 3, &values);
@@ -394,7 +400,7 @@ mod tests {
     #[test]
     fn calculating_the_determinant_of_a_3x3_matrix() {
         let values = [
-            1., 2., 6., 
+            1., 2., 6.,
             -5., 8., -4.,
             2., 6., 4.];
         let m = Matrix::new_with_values(3, 3, &values);
@@ -408,7 +414,7 @@ mod tests {
     #[test]
     fn calculating_the_determinant_of_a_4x4_matrix() {
         let values = [
-            -2., -8., 3., 5., 
+            -2., -8., 3., 5.,
             -3., 1., 7., 3.,
             1., 2., -9., 6.,
             -6., 7., 7., -9.];
@@ -424,7 +430,7 @@ mod tests {
     #[test]
     fn testing_an_invertible_matrix_for_invertibility() {
         let values = [
-            6., 4., 4., 4., 
+            6., 4., 4., 4.,
             5., 5., 7., 6.,
             4., -9., 3., -7.,
             9., 1., 7., -6.];
@@ -437,7 +443,7 @@ mod tests {
     #[test]
     fn testing_a_noninvertible_matrix_for_invertibility() {
         let values = [
-            -4., 2., -2., 3., 
+            -4., 2., -2., 3.,
             9., 6., 2., 6.,
             0., -5., 1., -5.,
             0., 0., 0., 0.];
@@ -450,7 +456,7 @@ mod tests {
     #[test]
     fn calculating_the_inverse_of_a_matrix() {
         let values = [
-            -5., 2., 6., -8., 
+            -5., 2., 6., -8.,
             1., -5., 1., 8.,
             7., 7., -6., -7.,
             1., -3., 7., 4.];
@@ -477,7 +483,7 @@ mod tests {
     #[test]
     fn calculating_the_inverse_of_another_matrix() {
         let values = [
-            8., -5., 9., 2., 
+            8., -5., 9., 2.,
             7., 5., 6., 1.,
             -6., 0., 9., 6.,
             -3., 0., -9., -4.];
@@ -496,7 +502,7 @@ mod tests {
     #[test]
     fn calculating_the_inverse_of_a_third_matrix() {
         let values = [
-            9., 3., 0., 9., 
+            9., 3., 0., 9.,
             -5., -2., -6., -3.,
             -4., 9., 6., 4.,
             -7., 6., 6., 2.];
@@ -515,19 +521,19 @@ mod tests {
     #[test]
     fn multiplying_a_product_by_its_inverse() {
         let values1 = [
-            3., -9., 7., 3., 
+            3., -9., 7., 3.,
             3., -8., 2., -9.,
             -4., 4., 4., 1.,
             -6., 5., -1., 1.];
         let m1 = Matrix::new_with_values(4, 4, &values1);
 
         let values2 = [
-            8., 2., 2., 2., 
+            8., 2., 2., 2.,
             3., -1., 7., 0.,
             7., 0., 5., 4.,
             6., -2., 0., 5.];
         let m2 = Matrix::new_with_values(4, 4, &values2);
-        
+
         let m_product = m1 * &m2;
         assert_eq!(m1, m_product * &m2.inverse());
     }

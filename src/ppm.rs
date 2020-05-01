@@ -1,5 +1,4 @@
 use super::canvas::*;
-use super::color::*;
 
 // TODO: Document the public API
 
@@ -18,17 +17,26 @@ fn clamp(value: i32, min: i32, max: i32) -> i32 {
     value
 }
 
+fn as_rgb255(color: f64) -> i32 {
+    let color255 = (color * MAX_COLOR_VALUE as f64) as i32;
+    clamp(color255, 0, 255)
+}
+
+// FIXME: This works in ImageMagick but crashes EOG for some values
 pub fn canvas_to_ppm(canvas: Canvas) -> String {
     let mut s = format!("P3\n{} {}\n{}\n", canvas.width, canvas.height, MAX_COLOR_VALUE);
-    
+
     for y in 0..canvas.height {
         for x in 0..canvas.width {
             let pixel = canvas.pixel_at(x, y);
-            let red = (pixel.r * MAX_COLOR_VALUE as f64) as i32;
-            let green = (pixel.g * MAX_COLOR_VALUE as f64) as i32;
-            let blue = (pixel.b * MAX_COLOR_VALUE as f64) as i32;
 
-            let rgb_tuple = format!("{} {} {}", clamp(red, 0, MAX_COLOR_VALUE), clamp(green, 0, MAX_COLOR_VALUE), clamp(blue, 0, MAX_COLOR_VALUE));
+            // FIXME: Add a method in color struct to get RGB_255 value of a pixel/color component
+            // Could also use destructuring ie let (red, green, blue) = pixel.as_rgb255();
+            let red = as_rgb255(pixel.r);
+            let green = as_rgb255(pixel.g);
+            let blue = as_rgb255(pixel.b);
+
+            let rgb_tuple = format!("{} {} {}", red, green, blue);
             s.push_str(&rgb_tuple);
             if (x > 0 && x % MAX_PIXELS_PER_LINE == 0) || x == (canvas.width -1) {
                 s.push('\n');
@@ -45,6 +53,7 @@ pub fn canvas_to_ppm(canvas: Canvas) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::color::*;
 
     #[test]
     fn constructing_the_ppm_header() {

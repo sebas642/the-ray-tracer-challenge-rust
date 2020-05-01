@@ -6,15 +6,16 @@ use super::color::*;
 pub struct Canvas {
     pub width: usize,
     pub height: usize,
-    pub pixels: Vec<Vec<Color>> // A vector for each row of pixel 
+    pub pixels: Vec<Vec<Color>> // A vector for each row of pixel
 }
 
 impl Canvas {
+    /// Creates a new black canvas.
     pub fn new(width: usize, height: usize) -> Canvas {
         Canvas::new_filled(width, height, BLACK)
     }
 
-    // FIXME: How to make 3rd argument optionnal for 'new' ?
+    /// Creates a new canvas of the given color.
     pub fn new_filled(width: usize, height: usize, color: Color) -> Canvas {
         Canvas {width, height, pixels: vec![vec![color; width]; height]}
     }
@@ -38,7 +39,7 @@ mod tests {
     #[test]
     fn creating_a_canvas() {
         let c = Canvas::new(10, 20);
-        
+
         assert_eq!(c.width, 10);
         assert_eq!(c.height, 20);
 
@@ -53,7 +54,7 @@ mod tests {
     #[test]
     fn writing_pixels_to_a_canvas() {
         let mut c = Canvas::new(10, 20);
-        
+
         // Write and read red pixel
         c.write_pixel(2, 3, RED);
         assert_eq!(c.pixel_at(2, 3), RED);

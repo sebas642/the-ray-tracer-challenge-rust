@@ -13,17 +13,17 @@ impl Tuple {
     pub fn point(x: f64, y: f64, z: f64) -> Tuple {
         Tuple {x, y, z, w: 1f64}
     }
-    
+
     pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
         Tuple {x, y, z, w: 0f64}
     }
-    
+
     pub fn is_point(&self) -> bool {
-        self.w == 1f64
+        super::utils::approx_eq(self.w, 1f64)
     }
 
     pub fn is_vector(&self) -> bool {
-        self.w == 0f64
+        super::utils::approx_eq(self.w, 0f64)
     }
 
     pub fn magnitude(&self) -> f64 {
@@ -36,7 +36,7 @@ impl Tuple {
     }
 
     pub fn dot_product(&a: &Tuple, &b: &Tuple) -> f64 {
-        a.x * b.x + 
+        a.x * b.x +
         a.y * b.y +
         a.z * b.z
     }
@@ -91,7 +91,7 @@ impl std::ops::Neg for Tuple {
     type Output = Self;
 
     fn neg(self) -> Self {
-        Self { 
+        Self {
             x: -self.x,
             y: -self.y,
             z: -self.z,
@@ -104,7 +104,7 @@ impl std::ops::Mul<f64> for Tuple {
     type Output = Self;
 
     fn mul(self, factor: f64) -> Self {
-        Self { 
+        Self {
             x: self.x * factor,
             y: self.y * factor,
             z: self.z * factor,
@@ -117,7 +117,7 @@ impl std::ops::Div<f64> for Tuple {
     type Output = Self;
 
     fn div(self, factor: f64) -> Self {
-        Self { 
+        Self {
             x: self.x / factor,
             y: self.y / factor,
             z: self.z / factor,
