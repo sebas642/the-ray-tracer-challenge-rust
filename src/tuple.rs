@@ -1,6 +1,6 @@
-// FIXME: Import utils ?!?
-// The 'Token' struct is used to represent vectors, points, and colors.
-// TODO: Document the public API
+pub const POINT_ORIGIN: Tuple = Tuple{x: 0., y: 0., z: 0., w: 1f64};
+
+// Used to represent vectors, points, and colors.
 #[derive(Debug, Copy, Clone)]
 pub struct Tuple {
     pub x: f64,
@@ -33,6 +33,10 @@ impl Tuple {
     pub fn normalize(&self) -> Tuple {
         let mag = self.magnitude();
         Tuple { x: self.x / mag, y: self.y / mag, z: self.z / mag, w: self.w }
+    }
+
+    pub fn reflect(&input: &Tuple, &normal: &Tuple) -> Tuple {
+        input - (normal * 2. * Tuple::dot_product(&input, &normal))
     }
 
     pub fn dot_product(&a: &Tuple, &b: &Tuple) -> f64 {
@@ -328,5 +332,23 @@ mod tests {
 
         assert_eq!(Tuple::vector(-1.0, 2.0, -1.0), Tuple::cross_product(&v1, &v2));
         assert_eq!(Tuple::vector(1.0, -2.0, 1.0), Tuple::cross_product(&v2, &v1));
+    }
+
+    #[test]
+    fn reflecting_a_vector_approaching_45_degrees() {
+        let v = Tuple::vector(1., -1., 0.);
+        let n = Tuple::vector(0., 1., 0.);
+
+        let r = Tuple::reflect(&v, &n);
+        assert_eq!(Tuple::vector(1., 1., 0.), r);
+    }
+
+    #[test]
+    fn reflecting_a_vector_off_a_slanted_surface() {
+        let v = Tuple::vector(0., -1., 0.);
+        let n = Tuple::vector(2f64.sqrt() / 2., 2f64.sqrt() / 2., 0.);
+
+        let r = Tuple::reflect(&v, &n);
+        assert_eq!(Tuple::vector(1., 0., 0.), r);
     }
 }

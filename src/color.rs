@@ -29,6 +29,10 @@ impl PartialEq for Color {
     }
 }
 
+impl Default for Color {
+    fn default() -> Color { BLACK }
+}
+
 impl std::ops::Add for Color {
     type Output = Self;
 

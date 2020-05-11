@@ -1,6 +1,8 @@
 use super::intersection::Intersections;
+use super::material::Material;
 use super::matrix::Matrix;
 use super::ray::Ray;
+use super::tuple::Tuple;
 
 use std::any::Any;
 use std::fmt;
@@ -8,6 +10,8 @@ use std::fmt;
 pub trait Shape: fmt::Debug {
     fn intersect(&self, r: Ray) -> Intersections;
     fn transformation(&self) -> Matrix;
+    fn normal_at(&self, point: &Tuple) -> Tuple;
+    fn material(&self) -> &Material;
 
     fn box_clone(&self) -> BoxShape;
     fn box_eq(&self, other: &dyn Any) -> bool;

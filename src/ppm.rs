@@ -1,7 +1,5 @@
 use super::canvas::*;
 
-// TODO: Document the public API
-
 const MAX_COLOR_VALUE: i32 = 255;
 const MAX_PIXELS_PER_LINE: usize = 5;
 

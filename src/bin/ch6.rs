@@ -1,10 +1,11 @@
 extern crate the_ray_tracer_challenge_rust as tracer;
 use tracer::canvas::Canvas;
-use tracer::color;
+use tracer::color::{Color, WHITE};
+use tracer::light::PointLight;
+use tracer::material::Material;
 use tracer::ppm;
 use tracer::ray::Ray;
 use tracer::sphere::Sphere;
-use tracer::transform;
 use tracer::tuple::Tuple;
 
 use std::f64;
@@ -20,8 +21,12 @@ fn main() {
     let half = wall_size / 2.;
 
     let mut canvas = Canvas::new(CANVAS_SIZE, CANVAS_SIZE);
-    let transforms = transform::shearing(1., 0., 0., 0., 0., 0.) * &transform::scaling(1., 0.5, 1.);
-    let shape = Sphere::new_boxed(Some(transforms), None);
+    let material = Material::new(Some(Color::new(1., 0.2, 1.)));
+    let shape = Sphere::new_boxed(None, Some(material));
+
+    let light_position = Tuple::point(-10., 10., -10.);
+    let light_color = WHITE;
+    let light = PointLight::new(&light_position, &light_color);
 
     for y in 0..CANVAS_SIZE {
         let world_y = half - pixel_size * y as f64;
@@ -34,7 +39,13 @@ fn main() {
             let xs = shape.intersect(r);
 
             if xs.hit() != None {
-                canvas.write_pixel(x, y, color::RED);
+                let hit = xs.hit().unwrap();
+                let point = r.position(hit.t);
+                let normal = hit.object.normal_at(&point);
+                let eye = -r.direction;
+
+                let color = hit.object.material().lighting(&light, &point, &eye, &normal);
+                canvas.write_pixel(x, y, color);
             }
         }
     }
