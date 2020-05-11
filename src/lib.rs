@@ -11,3 +11,4 @@ pub mod sphere;
 pub mod transform;
 pub mod tuple;
 pub mod utils;
+pub mod world;

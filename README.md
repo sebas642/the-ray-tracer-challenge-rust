@@ -1,8 +1,7 @@
 # The Ray Tracer Challenge
 
-This the a partial implementation of [The Ray Tracer Challenge](https://pragprog.com/book/jbtracer/the-ray-tracer-challenge) book using Rust.
-
-This is a side project used to learn the Rust programming language. Lots of improvements could be made to improve documentation, robustness, performance, and readability.
+A partial implementation of [The Ray Tracer Challenge](https://pragprog.com/book/jbtracer/the-ray-tracer-challenge) book using Rust.
+This is a side project to learn the Rust programming language.
 
 ## Chapters
 

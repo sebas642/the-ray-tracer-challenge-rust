@@ -3,7 +3,7 @@ use super::shape::{Shape, BoxShape};
 use std::cmp::Ordering;
 use std::ops::Deref;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Intersection {
     pub t: f64,
     pub object: BoxShape
@@ -29,6 +29,7 @@ impl PartialOrd for Intersection {
 }
 
 /// A sorted list of intersections
+#[derive(Debug, Clone)]
 pub struct Intersections {
     xs: Vec<Intersection>
 }

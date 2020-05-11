@@ -21,7 +21,7 @@ fn main() {
     let half = wall_size / 2.;
 
     let mut canvas = Canvas::new(CANVAS_SIZE, CANVAS_SIZE);
-    let material = Material::new(Some(Color::new(1., 0.2, 1.)));
+    let material = Material::new(Some(Color::new(1., 0.2, 1.)), None, None, None, None);
     let shape = Sphere::new_boxed(None, Some(material));
 
     let light_position = Tuple::point(-10., 10., -10.);

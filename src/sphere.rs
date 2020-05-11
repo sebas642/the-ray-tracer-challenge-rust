@@ -271,7 +271,7 @@ mod tests {
     #[test]
     fn a_sphere_has_a_default_material() {
         let s = Sphere::default();
-        let m = Material::new(None);
+        let m = Material::default();
 
         assert_eq!(m, s.material);
     }

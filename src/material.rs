@@ -12,8 +12,14 @@ pub struct Material {
 }
 
 impl Material {
-    pub fn new(color: Option<Color>) -> Material {
-        Material {color: color.unwrap_or(WHITE), ambient: 0.1, diffuse: 0.9, specular: 0.9, shininess: 200.}
+    pub fn new(color: Option<Color>, ambient: Option<f64>, diffuse: Option<f64>, specular: Option<f64>, shininess: Option<f64>) -> Material {
+        Material {
+            color: color.unwrap_or(WHITE),
+            ambient: ambient.unwrap_or(0.1),
+            diffuse: diffuse.unwrap_or(0.9),
+            specular: specular.unwrap_or(0.9),
+            shininess: shininess.unwrap_or(200.)
+        }
     }
 
     pub fn lighting(&self, &light: &PointLight, &point: &Tuple, &eyev: &Tuple, &normalv: &Tuple) -> Color {
@@ -55,7 +61,7 @@ impl Material {
 
 impl Default for Material {
     fn default() -> Self {
-        Material::new(None)
+        Material::new(None, None, None, None, None)
     }
 }
 
@@ -66,7 +72,7 @@ mod tests {
     #[test]
     fn the_default_material() {
         let c = WHITE;
-        let m = Material::new(Some(c));
+        let m = Material::default();
 
         assert_eq!(c, m.color);
         assert_eq!(0.1, m.ambient);
