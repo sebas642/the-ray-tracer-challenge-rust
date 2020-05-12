@@ -3,6 +3,8 @@
 A partial implementation of [The Ray Tracer Challenge](https://pragprog.com/book/jbtracer/the-ray-tracer-challenge) book using Rust.
 This is a side project to learn the Rust programming language.
 
+![Build Status](https://github.com/sebas642/the-ray-tracer-challenge-rust/workflows/Rust/badge.svg)
+
 ## Chapters
 
 - [x] Chapter 1 - Tuples, Points, and Vectors
