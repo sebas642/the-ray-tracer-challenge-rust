@@ -1,6 +1,6 @@
 extern crate the_ray_tracer_challenge_rust as tracer;
 use tracer::camera::Camera;
-use tracer::color::Color;
+use tracer::color::{Color, WHITE};
 use tracer::light::PointLight;
 use tracer::material::Material;
 use tracer::ppm;
@@ -50,7 +50,7 @@ fn main() {
     let left_m = Material::new(Some(Color::new(1., 0.8, 0.1)), None, Some(0.7), Some(0.3), None);
     let left_sphere = Sphere::new_boxed(Some(left_tr), Some(left_m));
 
-    let light = PointLight::new(&Tuple::point(-10., 10., -10.), &Color::new(1., 1., 1.));
+    let light = PointLight::new(&Tuple::point(-10., 10., -10.), &WHITE);
     let world = World::new(Some(light), vec![floor, left_wall, right_wall, middle_sphere, right_sphere, left_sphere]);
 
     let c_from = Tuple::point(0., 1.5, -5.);

@@ -2,6 +2,7 @@ use super::shape::BoxShape;
 use super::intersection::Intersection;
 use super::ray::Ray;
 use super::tuple::Tuple;
+use super::utils;
 
 /// Structure used to store helpful computations
 pub struct Comps {
@@ -9,6 +10,7 @@ pub struct Comps {
     pub object: BoxShape,
 
     pub point: Tuple,
+    pub over_point: Tuple,
     pub eyev: Tuple,
     pub normalv: Tuple,
 
@@ -28,13 +30,15 @@ impl Comps {
             false
         };
 
-        Comps {t: i.t, object: i.object.clone(), point, eyev, normalv, inside}
+        let over_point = point + (normalv * utils::EPSILON);
+        Comps {t: i.t, object: i.object.clone(), point, over_point, eyev, normalv, inside}
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::transform;
     use crate::sphere::Sphere;
 
     #[test]
@@ -72,5 +76,17 @@ mod tests {
 
         let comps = Comps::prepare_computations(&i, &r);
         assert_eq!(true, comps.inside);
+    }
+
+    #[test]
+    fn the_hit_should_offset_the_point() {
+        let r = Ray::new(&Tuple::point(0., 0., -5.), &Tuple::vector(0., 0., 1.));
+        let s = Sphere::new_boxed(Some(transform::translation(0., 0., 1.)), None);
+
+        let i = Intersection::new(5., s);
+
+        let comps = Comps::prepare_computations(&i, &r);
+        assert!(comps.over_point.z < -utils::EPSILON / 2.);
+        assert!(comps.point.z > comps.over_point.z);
     }
 }

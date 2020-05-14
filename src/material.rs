@@ -22,7 +22,7 @@ impl Material {
         }
     }
 
-    pub fn lighting(&self, &light: &PointLight, &point: &Tuple, &eyev: &Tuple, &normalv: &Tuple) -> Color {
+    pub fn lighting(&self, &light: &PointLight, &point: &Tuple, &eyev: &Tuple, &normalv: &Tuple, in_shadow: bool) -> Color {
         let effective_color = self.color * light.intensity;
         let lightv = (light.position - point).normalize();
 
@@ -33,7 +33,7 @@ impl Material {
         // A negative number means the light is on the other side of the surface.
         let light_dot_normal = Tuple::dot_product(&lightv, &normalv);
 
-        let (diffuse, specular) = if light_dot_normal < 0. {
+        let (diffuse, specular) = if light_dot_normal < 0. || in_shadow {
             (BLACK, BLACK)
         } else {
             let diffuse = effective_color * self.diffuse * light_dot_normal;
@@ -90,7 +90,7 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 0., -10.), &WHITE);
 
         let result = Color::new(1.9, 1.9, 1.9);
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv));
+        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, false));
     }
 
     #[test]
@@ -103,7 +103,7 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 0., -10.), &WHITE);
 
         let result = WHITE;
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv));
+        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, false));
     }
 
     #[test]
@@ -116,7 +116,7 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 10., -10.), &WHITE);
 
         let result = Color::new(0.7364, 0.7364, 0.7364);
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv));
+        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, false));
     }
 
     #[test]
@@ -129,7 +129,7 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 10., -10.), &WHITE);
 
         let result = Color::new(1.6364, 1.6364, 1.6364);
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv));
+        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, false));
     }
 
     #[test]
@@ -140,8 +140,24 @@ mod tests {
         let eyev = Tuple::vector(0., 0., -1.);
         let normalv = Tuple::vector(0., 0., -1.);
         let light = PointLight::new(&Tuple::point(0., 0., 10.), &WHITE);
+        let in_shadow = false;
 
         let result = Color::new(0.1, 0.1, 0.1);
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv));
+        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, in_shadow));
     }
+
+    #[test]
+    fn lighting_with_the_surface_in_shadow() {
+        let m = Material::default();
+        let position = Tuple::point(0., 0., 0.);
+
+        let eyev = Tuple::vector(0., 0., -1.);
+        let normalv = Tuple::vector(0., 0., -1.);
+        let light = PointLight::new(&Tuple::point(0., 0., -10.), &WHITE);
+        let in_shadow = true;
+
+        let result = Color::new(0.1, 0.1, 0.1);
+        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, in_shadow));
+    }
+
 }
