@@ -13,7 +13,7 @@ This is a side project to learn the Rust programming language.
 - [X] Chapter 4 - Matrix Transformations
 - [X] Chapter 5 - Ray-Sphere Intersections
 - [X] Chapter 6 - Light and Shading
-- [ ] Chapter 7 - Making a Scene
+- [X] Chapter 7 - Making a Scene
 - [ ] Chapter 8 - Shadows
 - [ ] Chapter 9 - Planes
 - [ ] Chapter 10 - Patterns
@@ -25,3 +25,11 @@ This is a side project to learn the Rust programming language.
 - [ ] Chapter 16 - Constructive Solid Geometry (CSG)
 - [ ] Chapter 17 - Next Steps
 - [ ] Chapter 18 - Rendering the Cover Image
+
+## References
+
+- [The Ray Tracer Challenge Errata](https://pragprog.com/titles/jbtracer/errata)
+- [The Ray Tracer Challenge Forum](https://forum.raytracerchallenge.com/)
+- [The Rust Programming Language](https://doc.rust-lang.org/book/) or execute ```rustup doc --book```
+- [The Rust Reference](https://doc.rust-lang.org/stable/reference/) or execute ```rustup doc --reference```
+- [Rust by Example](https://doc.rust-lang.org/rust-by-example/) or execute ```rustup doc --rust-by-example```

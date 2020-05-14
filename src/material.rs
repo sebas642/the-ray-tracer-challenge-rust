@@ -55,7 +55,6 @@ impl Material {
         };
 
         ambient + diffuse + specular
-
     }
 }
 

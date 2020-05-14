@@ -1,4 +1,4 @@
-use super::shape::{Shape, BoxShape};
+use super::shape::BoxShape;
 
 use std::cmp::Ordering;
 use std::ops::Deref;
@@ -10,7 +10,7 @@ pub struct Intersection {
 }
 
 impl Intersection {
-    pub fn new(t: f64, object: Box<dyn Shape>) -> Intersection {
+    pub fn new(t: f64, object: BoxShape) -> Intersection {
         Intersection{t, object}
     }
 }

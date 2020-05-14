@@ -86,11 +86,15 @@ impl Shape for Sphere {
         &self.material
     }
 
+    fn set_material(&mut self, m: Material) {
+        self.material = m;
+    }
+
     fn normal_at(&self, &world_point: &Tuple) -> Tuple {
         let object_point = self.transformation().inverse() * world_point;
         let object_normal = object_point - self.origin;
         let world_normal = self.transformation().inverse().transpose() * object_normal;
-        Tuple::vector(world_normal.x, world_normal.y, world_point.z).normalize()
+        Tuple::vector(world_normal.x, world_normal.y, world_normal.z).normalize()
     }
 }
 

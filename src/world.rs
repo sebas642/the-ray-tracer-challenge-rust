@@ -1,4 +1,5 @@
-use super::color::{Color, WHITE};
+use super::color::{Color, BLACK, WHITE};
+use super::comps::Comps;
 use super::intersection::{Intersection, Intersections};
 use super::light::PointLight;
 use super::material::Material;
@@ -23,6 +24,25 @@ impl World {
         let mut intersections : Vec<Intersection> = vec![];
         self.shapes.iter().for_each(|shape| shape.intersect(r).iter().for_each(|i| intersections.push(i.clone())));
         Intersections::new(intersections)
+    }
+
+    pub fn shade_hit(&self, comps: &Comps) -> Color {
+        if self.light != None {
+            comps.object.material().lighting(&self.light.unwrap(), &comps.point, &comps.eyev, &comps.normalv)
+        } else {
+            BLACK
+        }
+    }
+
+    pub fn color_at(&self, r: &Ray) -> Color {
+        let i = self.intersect(r);
+        let hit = i.hit();
+        if hit != None {
+            let comps = Comps::prepare_computations(hit.unwrap(), r);
+            self.shade_hit(&comps)
+        } else {
+            BLACK
+        }
     }
 }
 
@@ -82,5 +102,62 @@ mod tests {
         assert_eq!(4.5, xs[1].t);
         assert_eq!(5.5, xs[2].t);
         assert_eq!(6., xs[3].t);
+    }
+
+    #[test]
+    fn shading_an_intersection() {
+        let w = World::default();
+        let r = Ray::new(&Tuple::point(0., 0., -5.), &Tuple::vector(0., 0., 1.));
+        let s = w.shapes[0].clone();
+
+        let i = Intersection::new(4., s);
+
+        let comps = Comps::prepare_computations(&i, &r);
+        let c = w.shade_hit(&comps);
+        assert_eq!(Color::new(0.38066, 0.47583, 0.2855), c);
+    }
+
+    #[test]
+    fn shading_an_intersection_from_the_inside() {
+        let light = PointLight::new(&Tuple::point(0., 0.25, 0.), &WHITE);
+        let w = World {light: Some(light), ..Default::default() };
+        let r = Ray::new(&Tuple::point(0., 0., 0.), &Tuple::vector(0., 0., 1.));
+        let s = w.shapes[1].clone();
+
+        let i = Intersection::new(0.5, s);
+
+        let comps = Comps::prepare_computations(&i, &r);
+        let c = w.shade_hit(&comps);
+        assert_eq!(Color::new(0.90498, 0.90498, 0.90498), c);
+    }
+
+    #[test]
+    fn the_color_when_a_ray_misses() {
+        let w = World::default();
+        let r = Ray::new(&Tuple::point(0., 0., -5.), &Tuple::vector(0., 1., 0.));
+
+        let c = w.color_at(&r);
+        assert_eq!(BLACK, c);
+    }
+
+    #[test]
+    fn the_color_when_a_ray_hits() {
+        let w = World::default();
+        let r = Ray::new(&Tuple::point(0., 0., -5.), &Tuple::vector(0., 0., 1.));
+
+        let c = w.color_at(&r);
+        assert_eq!(Color::new(0.38066, 0.47583, 0.2855), c);
+    }
+
+    #[test]
+    fn the_color_with_an_intersection_behind_the_ray() {
+        let mut w = World::default();
+        let material = Material {ambient: 1., ..*w.shapes[0].material()};
+        w.shapes.first_mut().unwrap().set_material(material);
+        w.shapes.last_mut().unwrap().set_material(material);
+
+        let r = Ray::new(&Tuple::point(0., 0., 0.75), &Tuple::vector(0., 0., -1.));
+        let c = w.color_at(&r);
+        assert_eq!(w.shapes[1].material().color, c);
     }
 }

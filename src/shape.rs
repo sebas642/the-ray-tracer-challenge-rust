@@ -12,6 +12,7 @@ pub trait Shape: fmt::Debug {
     fn transformation(&self) -> Matrix;
     fn normal_at(&self, point: &Tuple) -> Tuple;
     fn material(&self) -> &Material;
+    fn set_material(&mut self, m: Material);
 
     fn box_clone(&self) -> BoxShape;
     fn box_eq(&self, other: &dyn Any) -> bool;
