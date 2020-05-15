@@ -14,7 +14,7 @@ use std::f64;
 
 fn main() {
     let floor_tr = transform::scaling(10., 0.01, 10.);
-    let floor_m = Material::new(Some(Color::new(1., 0.9, 0.9)), None, None, Some(0.), None);
+    let floor_m = Material::new(Some(Color::new(1., 0.9, 0.9)), None, None, None, Some(0.), None);
     let floor = Sphere::new_boxed(Some(floor_tr), Some(floor_m));
 
     let left_wall_tr = transform::transforms(&[
@@ -33,21 +33,21 @@ fn main() {
     ]);
     let right_wall = Sphere::new_boxed(Some(right_wall_tr), Some(floor_m));
 
-    let middle_m = Material::new(Some(Color::new(0.1, 1., 0.5)), None, Some(0.7), Some(0.3), None);
+    let middle_m = Material::new(Some(Color::new(0.1, 1., 0.5)), None, None, Some(0.7), Some(0.3), None);
     let middle_sphere = Sphere::new_boxed(Some(transform::translation(-0.5, 1., 0.5)), Some(middle_m));
 
     let right_tr = transform::transforms(&[
         transform::scaling(0.5, 0.5, 0.5),
         transform::translation(1.5, 0.5, -0.5)
     ]);
-    let right_m = Material::new(Some(Color::new(0.5, 1., 0.1)), None, Some(0.7), Some(0.3), None);
+    let right_m = Material::new(Some(Color::new(0.5, 1., 0.1)), None, None, Some(0.7), Some(0.3), None);
     let right_sphere = Sphere::new_boxed(Some(right_tr), Some(right_m));
 
     let left_tr = transform::transforms(&[
         transform::scaling(0.33, 0.33, 0.33),
         transform::translation(-1.5, 0.33, -0.75)
     ]);
-    let left_m = Material::new(Some(Color::new(1., 0.8, 0.1)), None, Some(0.7), Some(0.3), None);
+    let left_m = Material::new(Some(Color::new(1., 0.8, 0.1)), None, None, Some(0.7), Some(0.3), None);
     let left_sphere = Sphere::new_boxed(Some(left_tr), Some(left_m));
 
     let light = PointLight::new(&Tuple::point(-10., 10., -10.), &WHITE);

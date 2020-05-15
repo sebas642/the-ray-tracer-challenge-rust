@@ -29,7 +29,7 @@ impl World {
     pub fn shade_hit(&self, comps: &Comps) -> Color {
         if self.light != None {
             comps.object.material().lighting(
-                &self.light.unwrap(), &comps.point, &comps.eyev, &comps.normalv, self.is_shadowed(&comps.over_point))
+                &comps.object, &self.light.unwrap(), &comps.point, &comps.eyev, &comps.normalv, self.is_shadowed(&comps.over_point))
         } else {
             BLACK
         }
@@ -69,7 +69,7 @@ impl Default for World {
         let diffuse = 0.7;
         let specular = 0.2;
         let material = Material::new(
-            Some(Color::new(0.8, 1., 0.6)), None, Some(diffuse), Some(specular), None
+            Some(Color::new(0.8, 1., 0.6)), None, None, Some(diffuse), Some(specular), None
         );
         let s1 = Sphere::new_boxed(None, Some(material));
         let s2 = Sphere::new_boxed(Some(transform::scaling(0.5, 0.5, 0.5)), None);
@@ -96,7 +96,7 @@ mod tests {
         let diffuse = 0.7;
         let specular = 0.2;
         let material = Material::new(
-            Some(Color::new(0.8, 1., 0.6)), None, Some(diffuse), Some(specular), None
+            Some(Color::new(0.8, 1., 0.6)), None, None, Some(diffuse), Some(specular), None
         );
         let s1 = Sphere::new_boxed(None, Some(material));
         let s2 = Sphere::new_boxed(Some(transform::scaling(0.5, 0.5, 0.5)), None);

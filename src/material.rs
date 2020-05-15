@@ -1,10 +1,13 @@
 use super::color::{Color, BLACK, WHITE};
 use super::tuple::Tuple;
 use super::light::PointLight;
+use super::pattern;
+use super::shape::BoxShape;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Material {
     pub color: Color,
+    pub pattern: Option<pattern::StripePattern>,
     pub ambient: f64,
     pub diffuse: f64,
     pub specular: f64,
@@ -12,9 +15,17 @@ pub struct Material {
 }
 
 impl Material {
-    pub fn new(color: Option<Color>, ambient: Option<f64>, diffuse: Option<f64>, specular: Option<f64>, shininess: Option<f64>) -> Material {
+    // FIXME: This is terrible... Use the builder pattern instead? Or use mutable structs.
+    pub fn new(
+        color: Option<Color>,
+        pattern: Option<pattern::StripePattern>,
+        ambient: Option<f64>,
+        diffuse: Option<f64>,
+        specular: Option<f64>,
+        shininess: Option<f64>) -> Material {
         Material {
             color: color.unwrap_or(WHITE),
+            pattern,
             ambient: ambient.unwrap_or(0.1),
             diffuse: diffuse.unwrap_or(0.9),
             specular: specular.unwrap_or(0.9),
@@ -22,8 +33,12 @@ impl Material {
         }
     }
 
-    pub fn lighting(&self, &light: &PointLight, &point: &Tuple, &eyev: &Tuple, &normalv: &Tuple, in_shadow: bool) -> Color {
-        let effective_color = self.color * light.intensity;
+    pub fn lighting(&self, object: &BoxShape, &light: &PointLight, &point: &Tuple, &eyev: &Tuple, &normalv: &Tuple, in_shadow: bool) -> Color {
+        let color = match self.pattern {
+            Some(p) => pattern::stripe_at_object(&p, object, &point),
+            _ => self.color
+        };
+        let effective_color = color * light.intensity;
         let lightv = (light.position - point).normalize();
 
         let ambient = effective_color * self.ambient;
@@ -60,13 +75,14 @@ impl Material {
 
 impl Default for Material {
     fn default() -> Self {
-        Material::new(None, None, None, None, None)
+        Material::new(None, None, None, None, None, None)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::sphere::Sphere;
 
     #[test]
     fn the_default_material() {
@@ -74,6 +90,7 @@ mod tests {
         let m = Material::default();
 
         assert_eq!(c, m.color);
+        assert_eq!(None, m.pattern);
         assert_eq!(0.1, m.ambient);
         assert_eq!(0.9, m.diffuse);
         assert_eq!(0.9, m.specular);
@@ -90,7 +107,7 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 0., -10.), &WHITE);
 
         let result = Color::new(1.9, 1.9, 1.9);
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, false));
+        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, false));
     }
 
     #[test]
@@ -103,7 +120,7 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 0., -10.), &WHITE);
 
         let result = WHITE;
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, false));
+        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, false));
     }
 
     #[test]
@@ -116,7 +133,7 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 10., -10.), &WHITE);
 
         let result = Color::new(0.7364, 0.7364, 0.7364);
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, false));
+        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, false));
     }
 
     #[test]
@@ -129,7 +146,7 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 10., -10.), &WHITE);
 
         let result = Color::new(1.6364, 1.6364, 1.6364);
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, false));
+        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, false));
     }
 
     #[test]
@@ -143,7 +160,7 @@ mod tests {
         let in_shadow = false;
 
         let result = Color::new(0.1, 0.1, 0.1);
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, in_shadow));
+        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, in_shadow));
     }
 
     #[test]
@@ -157,7 +174,24 @@ mod tests {
         let in_shadow = true;
 
         let result = Color::new(0.1, 0.1, 0.1);
-        assert_eq!(result, m.lighting(&light, &position, &eyev, &normalv, in_shadow));
+        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, in_shadow));
     }
 
+    #[test]
+    fn lighting_with_a_pattern_applied() {
+        let mut m = Material::default();
+        m.pattern = Some(pattern::stripe_pattern(WHITE, BLACK, None));
+        m.ambient = 1.;
+        m.diffuse = 0.;
+        m.specular = 0.;
+
+        let eyev = Tuple::vector(0., 0., -1.);
+        let normalv = Tuple::vector(0., 0., -1.);
+        let light = PointLight::new(&Tuple::point(0., 0., -10.), &WHITE);
+        let in_shadow = true;
+
+        let s = Sphere::default_boxed();
+        assert_eq!(WHITE, m.lighting(&s, &light, &Tuple::point(0.9, 0., 0.), &eyev, &normalv, in_shadow));
+        assert_eq!(BLACK, m.lighting(&s, &light, &Tuple::point(1.1, 0., 0.), &eyev, &normalv, in_shadow));
+    }
 }

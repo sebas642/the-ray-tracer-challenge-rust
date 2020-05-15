@@ -1,9 +1,11 @@
 # The Ray Tracer Challenge
 
+![Build Status](https://github.com/sebas642/the-ray-tracer-challenge-rust/workflows/Rust/badge.svg)
+
 A partial implementation of [The Ray Tracer Challenge](https://pragprog.com/book/jbtracer/the-ray-tracer-challenge) book using Rust.
 This is a side project to learn the Rust programming language.
 
-![Build Status](https://github.com/sebas642/the-ray-tracer-challenge-rust/workflows/Rust/badge.svg)
+Debug mode is extremely slow. Sample apps should be executed in release mode which is exponentilly faster.
 
 ## Chapters
 
