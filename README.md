@@ -15,7 +15,7 @@ This is a side project to learn the Rust programming language.
 - [X] Chapter 6 - Light and Shading
 - [X] Chapter 7 - Making a Scene
 - [X] Chapter 8 - Shadows
-- [ ] Chapter 9 - Planes
+- [X] Chapter 9 - Planes
 - [ ] Chapter 10 - Patterns
 - [ ] Chapter 11 - Reflection and Refraction
 - [ ] Chapter 12 - Cubes

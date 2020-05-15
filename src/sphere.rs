@@ -5,7 +5,6 @@ use super::ray::Ray;
 use super::shape::{Shape, BoxShape};
 use super::tuple::{Tuple, POINT_ORIGIN};
 
-
 use std::any::Any;
 
 #[derive(Debug, Copy, Clone)]
@@ -58,26 +57,6 @@ impl Shape for Sphere {
         Box::new(*self)
     }
 
-    fn intersect(&self, r: Ray) -> Intersections {
-        let mut xs: Vec<Intersection> = Vec::new();
-
-        let r = r.transform(self.transform.inverse());
-
-        let sphere_to_ray = r.origin - self.origin;
-        let a = Tuple::dot_product(&r.direction, &r.direction);
-        let b = 2. * Tuple::dot_product(&r.direction, &sphere_to_ray);
-        let c = Tuple::dot_product(&sphere_to_ray, &sphere_to_ray) - 1.0;
-
-        let d = b.powi(2) - (4. * a * c);
-
-        if d >= 0. {
-            xs.push(Intersection::new((-1. * b - d.sqrt()) / (2. * a), Box::new(*self)));
-            xs.push(Intersection::new((-1. * b + d.sqrt()) / (2. * a), Box::new(*self)));
-        }
-
-        Intersections::new(xs)
-    }
-
     fn transformation(&self) -> Matrix {
         self.transform
     }
@@ -90,11 +69,25 @@ impl Shape for Sphere {
         self.material = m;
     }
 
-    fn normal_at(&self, &world_point: &Tuple) -> Tuple {
-        let object_point = self.transformation().inverse() * world_point;
-        let object_normal = object_point - self.origin;
-        let world_normal = self.transformation().inverse().transpose() * object_normal;
-        Tuple::vector(world_normal.x, world_normal.y, world_normal.z).normalize()
+    fn local_normal_at(&self, &local_point: &Tuple) -> Tuple {
+        local_point - self.origin
+    }
+
+    fn local_intersect(&self, r: &Ray) -> Intersections {
+        let sphere_to_ray = r.origin - self.origin;
+        let a = Tuple::dot_product(&r.direction, &r.direction);
+        let b = 2. * Tuple::dot_product(&r.direction, &sphere_to_ray);
+        let c = Tuple::dot_product(&sphere_to_ray, &sphere_to_ray) - 1.0;
+
+        let d = b.powi(2) - (4. * a * c);
+
+        let mut xs: Vec<Intersection> = Vec::new();
+        if d >= 0. {
+            xs.push(Intersection::new((-1. * b - d.sqrt()) / (2. * a), self.box_clone()));
+            xs.push(Intersection::new((-1. * b + d.sqrt()) / (2. * a), self.box_clone()));
+        }
+
+        Intersections::new(xs)
     }
 }
 
