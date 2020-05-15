@@ -3,6 +3,8 @@ use tracer::camera::Camera;
 use tracer::color::{Color, WHITE};
 use tracer::light::PointLight;
 use tracer::material::Material;
+use tracer::pattern;
+use tracer::plane::Plane;
 use tracer::ppm;
 use tracer::sphere::Sphere;
 use tracer::tuple::Tuple;
@@ -13,27 +15,14 @@ use tracer::world::World;
 use std::f64;
 
 fn main() {
-    let floor_tr = transform::scaling(10., 0.01, 10.);
-    let floor_m = Material::new(Some(Color::new(1., 0.9, 0.9)), None, None, None, Some(0.), None);
-    let floor = Sphere::new_boxed(Some(floor_tr), Some(floor_m));
+    let f_pattern_tr = transform::scaling(0.5, 0.5, 0.5);
+    let f_pattern = pattern::stripe_pattern(Color::new(1., 0.9, 0.9), Color::new(0.9, 0.7, 0.7), Some(f_pattern_tr));
+    let floor_m = Material::new(Some(Color::new(1., 0.9, 0.9)), Some(f_pattern), None, None, Some(0.), None);
+    let floor = Plane::new_boxed(None, Some(floor_m));
 
-    let left_wall_tr = transform::transforms(&[
-        floor_tr,
-        transform::rotation_x(f64::consts::FRAC_PI_2),
-        transform::rotation_y(-f64::consts::FRAC_PI_4),
-        transform::translation(0., 0., 5.)
-    ]);
-    let left_wall = Sphere::new_boxed(Some(left_wall_tr), Some(floor_m));
-
-    let right_wall_tr = transform::transforms(&[
-        floor_tr,
-        transform::rotation_x(f64::consts::FRAC_PI_2),
-        transform::rotation_y(f64::consts::FRAC_PI_4),
-        transform::translation(0., 0., 5.)
-    ]);
-    let right_wall = Sphere::new_boxed(Some(right_wall_tr), Some(floor_m));
-
-    let middle_m = Material::new(Some(Color::new(0.1, 1., 0.5)), None, None, Some(0.7), Some(0.3), None);
+    let s_pattern_tr = transform::transforms(&[transform::rotation_x(2.), transform::rotation_y(2.), transform::rotation_z(2.), transform::scaling(0.2, 0.2, 0.2)]);
+    let s_pattern = pattern::stripe_pattern(Color::new(0., 1., 0.), Color::new(0.3, 0.6, 0.), Some(s_pattern_tr));
+    let middle_m = Material::new(Some(Color::new(0.1, 1., 0.5)), Some(s_pattern), None, Some(0.7), Some(0.3), None);
     let middle_sphere = Sphere::new_boxed(Some(transform::translation(-0.5, 1., 0.5)), Some(middle_m));
 
     let right_tr = transform::transforms(&[
@@ -51,13 +40,13 @@ fn main() {
     let left_sphere = Sphere::new_boxed(Some(left_tr), Some(left_m));
 
     let light = PointLight::new(&Tuple::point(-10., 10., -10.), &WHITE);
-    let world = World::new(Some(light), vec![floor, left_wall, right_wall, middle_sphere, right_sphere, left_sphere]);
+    let world = World::new(Some(light), vec![floor, middle_sphere, right_sphere, left_sphere]);
 
     let c_from = Tuple::point(0., 1.5, -5.);
     let c_to = Tuple::point(0., 1., 0.);
     let c_up = Tuple::vector(0., 1., 0.);
     let c_transform = view_transform(&c_from, &c_to, &c_up);
-    let camera = Camera::new(300, 150, f64::consts::FRAC_PI_3, Some(c_transform));
+    let camera = Camera::new(640, 480, f64::consts::FRAC_PI_3, Some(c_transform));
 
     let canvas = camera.render(&world);
     println!("{}", ppm::canvas_to_ppm(canvas));
