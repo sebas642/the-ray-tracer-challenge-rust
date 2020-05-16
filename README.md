@@ -35,3 +35,7 @@ Debug mode is extremely slow. Sample apps should be executed in release mode whi
 - [The Rust Programming Language](https://doc.rust-lang.org/book/) or execute ```rustup doc --book```
 - [The Rust Reference](https://doc.rust-lang.org/stable/reference/) or execute ```rustup doc --reference```
 - [Rust by Example](https://doc.rust-lang.org/rust-by-example/) or execute ```rustup doc --rust-by-example```
+
+## Sample
+
+![Sample Image](https://i.imgur.com/8CIOZPI.png)
