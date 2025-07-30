@@ -2,8 +2,8 @@ use super::intersection::{Intersection, Intersections};
 use super::material::Material;
 use super::matrix::Matrix;
 use super::ray::Ray;
-use super::shape::{Shape, BoxShape};
-use super::tuple::{Tuple, POINT_ORIGIN};
+use super::shape::{BoxShape, Shape};
+use super::tuple::{POINT_ORIGIN, Tuple};
 
 use std::any::Any;
 
@@ -11,7 +11,7 @@ use std::any::Any;
 pub struct Sphere {
     origin: Tuple,
     transform: Matrix,
-    material: Material
+    material: Material,
 }
 
 impl Sphere {
@@ -19,7 +19,7 @@ impl Sphere {
         Self {
             origin: POINT_ORIGIN,
             transform: transform.unwrap_or_default(),
-            material: material.unwrap_or_default()
+            material: material.unwrap_or_default(),
         }
     }
 
@@ -83,8 +83,14 @@ impl Shape for Sphere {
 
         let mut xs: Vec<Intersection> = Vec::new();
         if d >= 0. {
-            xs.push(Intersection::new((-1. * b - d.sqrt()) / (2. * a), self.box_clone()));
-            xs.push(Intersection::new((-1. * b + d.sqrt()) / (2. * a), self.box_clone()));
+            xs.push(Intersection::new(
+                (-1. * b - d.sqrt()) / (2. * a),
+                self.box_clone(),
+            ));
+            xs.push(Intersection::new(
+                (-1. * b + d.sqrt()) / (2. * a),
+                self.box_clone(),
+            ));
         }
 
         Intersections::new(xs)
@@ -111,7 +117,6 @@ mod tests {
 
     #[test]
     fn a_ray_intersects_a_sphere_at_a_tangent() {
-
         let r = Ray::new(&Tuple::point(0., 1., -5.), &Tuple::vector(0., 0., 1.));
         let s = Sphere::default_boxed();
 
@@ -120,7 +125,6 @@ mod tests {
         assert_eq!(5.0, xs[0].t);
         assert_eq!(5.0, xs[1].t);
     }
-
 
     #[test]
     fn a_ray_misses_a_sphere() {
@@ -275,7 +279,10 @@ mod tests {
 
     #[test]
     fn a_sphere_may_be_assigned_a_material() {
-        let m = Material { ambient: 1., ..Default::default() };
+        let m = Material {
+            ambient: 1.,
+            ..Default::default()
+        };
         let s = Sphere::new(None, Some(m));
 
         assert_eq!(m, s.material);

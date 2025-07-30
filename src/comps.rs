@@ -1,6 +1,6 @@
-use super::shape::BoxShape;
 use super::intersection::Intersection;
 use super::ray::Ray;
+use super::shape::BoxShape;
 use super::tuple::Tuple;
 use super::utils;
 
@@ -14,7 +14,7 @@ pub struct Comps {
     pub eyev: Tuple,
     pub normalv: Tuple,
 
-    pub inside: bool
+    pub inside: bool,
 }
 
 impl Comps {
@@ -31,15 +31,23 @@ impl Comps {
         };
 
         let over_point = point + (normalv * utils::EPSILON);
-        Comps {t: i.t, object: i.object.clone(), point, over_point, eyev, normalv, inside}
+        Comps {
+            t: i.t,
+            object: i.object.clone(),
+            point,
+            over_point,
+            eyev,
+            normalv,
+            inside,
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::transform;
     use crate::sphere::Sphere;
+    use crate::transform;
 
     #[test]
     fn precomputing_the_state_of_an_intersection() {

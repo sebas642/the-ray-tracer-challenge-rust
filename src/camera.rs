@@ -12,7 +12,7 @@ pub struct Camera {
     pub pixel_size: f64,
     pub half_width: f64,
     pub half_height: f64,
-    pub transform: Matrix
+    pub transform: Matrix,
 }
 
 impl Camera {
@@ -27,7 +27,15 @@ impl Camera {
         };
 
         let pixel_size = half_width * 2. / hsize as f64;
-        Camera {hsize, vsize, fov, pixel_size, half_width, half_height, transform: transform.unwrap_or_default()}
+        Camera {
+            hsize,
+            vsize,
+            fov,
+            pixel_size,
+            half_width,
+            half_height,
+            transform: transform.unwrap_or_default(),
+        }
     }
 
     pub fn ray_for_pixel(&self, px: usize, py: usize) -> Ray {
@@ -115,10 +123,18 @@ mod tests {
     fn constructing_a_ray_when_the_camera_is_transformed() {
         let t = transform::translation(0., -2., 5.);
         let r = transform::rotation_y(f64::consts::FRAC_PI_4);
-        let c = Camera::new(201, 101, f64::consts::FRAC_PI_2, Some(transform::transforms(&[t, r])));
+        let c = Camera::new(
+            201,
+            101,
+            f64::consts::FRAC_PI_2,
+            Some(transform::transforms(&[t, r])),
+        );
         let r = c.ray_for_pixel(100, 50);
         assert_eq!(Tuple::point(0., 2., -5.), r.origin);
-        assert_eq!(Tuple::vector(2f64.sqrt()/2., 0., -2f64.sqrt()/2.), r.direction);
+        assert_eq!(
+            Tuple::vector(2f64.sqrt() / 2., 0., -2f64.sqrt() / 2.),
+            r.direction
+        );
     }
 
     #[test]

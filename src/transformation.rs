@@ -7,12 +7,14 @@ pub fn view_transform(&from: &Tuple, &to: &Tuple, up: &Tuple) -> Matrix {
     let left = Tuple::cross_product(&forward, &up.normalize());
     let true_up = Tuple::cross_product(&left, &forward);
 
-    let orientation = Matrix::new_with_values(4, 4, &[
-        left.x, left.y, left.z, 0.,
-        true_up.x, true_up.y, true_up.z, 0.,
-        -forward.x, -forward.y, -forward.z, 0.,
-        0., 0., 0., 1.
-    ]);
+    let orientation = Matrix::new_with_values(
+        4,
+        4,
+        &[
+            left.x, left.y, left.z, 0., true_up.x, true_up.y, true_up.z, 0., -forward.x,
+            -forward.y, -forward.z, 0., 0., 0., 0., 1.,
+        ],
+    );
 
     orientation * &transform::translation(-from.x, -from.y, -from.z)
 }
@@ -59,12 +61,14 @@ mod tests {
         let up = Tuple::vector(1., 1., 0.);
 
         let t = view_transform(&from, &to, &up);
-        let result = Matrix::new_with_values(4, 4, &vec![
-            -0.50709, 0.50709, 0.67612, -2.36643,
-            0.76772, 0.60609, 0.12122, -2.82843,
-            -0.35857, 0.59761, -0.71714, 0.00000,
-            0.00000, 0.00000, 0.00000, 1.00000
-        ]);
+        let result = Matrix::new_with_values(
+            4,
+            4,
+            &vec![
+                -0.50709, 0.50709, 0.67612, -2.36643, 0.76772, 0.60609, 0.12122, -2.82843,
+                -0.35857, 0.59761, -0.71714, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000,
+            ],
+        );
         assert_eq!(result, t);
     }
 }

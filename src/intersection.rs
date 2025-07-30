@@ -6,19 +6,18 @@ use std::ops::Deref;
 #[derive(Debug, Clone)]
 pub struct Intersection {
     pub t: f64,
-    pub object: BoxShape
+    pub object: BoxShape,
 }
 
 impl Intersection {
     pub fn new(t: f64, object: BoxShape) -> Intersection {
-        Intersection{t, object}
+        Intersection { t, object }
     }
 }
 
 impl PartialEq for Intersection {
     fn eq(&self, other: &Self) -> bool {
-       self.t == other.t
-            && &self.object == &other.object
+        self.t == other.t && &self.object == &other.object
     }
 }
 
@@ -31,14 +30,12 @@ impl PartialOrd for Intersection {
 /// A sorted list of intersections
 #[derive(Debug, Clone)]
 pub struct Intersections {
-    xs: Vec<Intersection>
+    xs: Vec<Intersection>,
 }
 
 impl Intersections {
     pub fn new(intersections: Vec<Intersection>) -> Intersections {
-        let mut xs = Intersections {
-            xs: intersections
-        };
+        let mut xs = Intersections { xs: intersections };
         xs.sort();
         xs
     }
@@ -59,7 +56,7 @@ impl Intersections {
     pub fn hit(&self) -> Option<&Intersection> {
         match self.xs.iter().find(|i| i.t >= 0.) {
             Some(i) => Some(i),
-            _ => None
+            _ => None,
         }
     }
 

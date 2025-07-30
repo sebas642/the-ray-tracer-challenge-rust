@@ -1,4 +1,9 @@
-pub const POINT_ORIGIN: Tuple = Tuple{x: 0., y: 0., z: 0., w: 1f64};
+pub const POINT_ORIGIN: Tuple = Tuple {
+    x: 0.,
+    y: 0.,
+    z: 0.,
+    w: 1f64,
+};
 
 // Used to represent vectors, points, and colors.
 #[derive(Debug, Copy, Clone)]
@@ -6,16 +11,16 @@ pub struct Tuple {
     pub x: f64,
     pub y: f64,
     pub z: f64,
-    pub w: f64
+    pub w: f64,
 }
 
 impl Tuple {
     pub fn point(x: f64, y: f64, z: f64) -> Tuple {
-        Tuple {x, y, z, w: 1f64}
+        Tuple { x, y, z, w: 1f64 }
     }
 
     pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
-        Tuple {x, y, z, w: 0f64}
+        Tuple { x, y, z, w: 0f64 }
     }
 
     pub fn is_point(&self) -> bool {
@@ -32,7 +37,12 @@ impl Tuple {
 
     pub fn normalize(&self) -> Tuple {
         let mag = self.magnitude();
-        Tuple { x: self.x / mag, y: self.y / mag, z: self.z / mag, w: self.w }
+        Tuple {
+            x: self.x / mag,
+            y: self.y / mag,
+            z: self.z / mag,
+            w: self.w,
+        }
     }
 
     pub fn reflect(&input: &Tuple, &normal: &Tuple) -> Tuple {
@@ -40,26 +50,24 @@ impl Tuple {
     }
 
     pub fn dot_product(&a: &Tuple, &b: &Tuple) -> f64 {
-        a.x * b.x +
-        a.y * b.y +
-        a.z * b.z
+        a.x * b.x + a.y * b.y + a.z * b.z
     }
 
     pub fn cross_product(&a: &Tuple, &b: &Tuple) -> Tuple {
         Tuple::vector(
             a.y * b.z - a.z * b.y,
             a.z * b.x - a.x * b.z,
-            a.x * b.y - a.y * b.x
+            a.x * b.y - a.y * b.x,
         )
     }
 }
 
 impl PartialEq for Tuple {
     fn eq(&self, other: &Self) -> bool {
-        super::utils::approx_eq(self.x, other.x) &&
-        super::utils::approx_eq(self.y, other.y) &&
-        super::utils::approx_eq(self.z, other.z) &&
-        super::utils::approx_eq(self.w, other.w)
+        super::utils::approx_eq(self.x, other.x)
+            && super::utils::approx_eq(self.y, other.y)
+            && super::utils::approx_eq(self.z, other.z)
+            && super::utils::approx_eq(self.w, other.w)
     }
 }
 
@@ -99,7 +107,7 @@ impl std::ops::Neg for Tuple {
             x: -self.x,
             y: -self.y,
             z: -self.z,
-            w: -self.w
+            w: -self.w,
         }
     }
 }
@@ -112,7 +120,7 @@ impl std::ops::Mul<f64> for Tuple {
             x: self.x * factor,
             y: self.y * factor,
             z: self.z * factor,
-            w: self.w
+            w: self.w,
         }
     }
 }
@@ -125,11 +133,10 @@ impl std::ops::Div<f64> for Tuple {
             x: self.x / factor,
             y: self.y / factor,
             z: self.z / factor,
-            w: self.w
+            w: self.w,
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -307,7 +314,10 @@ mod tests {
         let v = Tuple::vector(1.0, 2.0, 3.0);
 
         let divider = 14f64.sqrt();
-        assert_eq!(v.normalize(), Tuple::vector(1.0 / divider, 2.0 / divider, 3.0 / divider));
+        assert_eq!(
+            v.normalize(),
+            Tuple::vector(1.0 / divider, 2.0 / divider, 3.0 / divider)
+        );
     }
 
     #[test]
@@ -330,8 +340,14 @@ mod tests {
         let v1 = Tuple::vector(1.0, 2.0, 3.0);
         let v2 = Tuple::vector(2.0, 3.0, 4.0);
 
-        assert_eq!(Tuple::vector(-1.0, 2.0, -1.0), Tuple::cross_product(&v1, &v2));
-        assert_eq!(Tuple::vector(1.0, -2.0, 1.0), Tuple::cross_product(&v2, &v1));
+        assert_eq!(
+            Tuple::vector(-1.0, 2.0, -1.0),
+            Tuple::cross_product(&v1, &v2)
+        );
+        assert_eq!(
+            Tuple::vector(1.0, -2.0, 1.0),
+            Tuple::cross_product(&v2, &v1)
+        );
     }
 
     #[test]

@@ -6,7 +6,7 @@ use super::color::*;
 pub struct Canvas {
     pub width: usize,
     pub height: usize,
-    pub pixels: Vec<Vec<Color>> // A vector for each row of pixel
+    pub pixels: Vec<Vec<Color>>, // A vector for each row of pixel
 }
 
 impl Canvas {
@@ -17,7 +17,11 @@ impl Canvas {
 
     /// Creates a new canvas of the given color.
     pub fn new_filled(width: usize, height: usize, color: Color) -> Canvas {
-        Canvas {width, height, pixels: vec![vec![color; width]; height]}
+        Canvas {
+            width,
+            height,
+            pixels: vec![vec![color; width]; height],
+        }
     }
 
     pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
@@ -30,7 +34,6 @@ impl Canvas {
         self.pixels[y][x]
     }
 }
-
 
 #[cfg(test)]
 mod tests {

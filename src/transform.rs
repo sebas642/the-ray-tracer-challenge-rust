@@ -1,5 +1,5 @@
+use super::matrix::{MATRIX_IDENTITY, Matrix};
 use std::f64;
-use super::matrix::{Matrix, MATRIX_IDENTITY};
 
 pub fn transforms(list: &[Matrix]) -> Matrix {
     let mut m = MATRIX_IDENTITY;
@@ -138,7 +138,7 @@ mod tests {
         let r_half = rotation_x(f64::consts::FRAC_PI_4);
         let r_full = rotation_x(f64::consts::FRAC_PI_2);
 
-        let half_result = Tuple::point(0., 2f64.sqrt()/2., 2f64.sqrt()/2.);
+        let half_result = Tuple::point(0., 2f64.sqrt() / 2., 2f64.sqrt() / 2.);
         let full_result = Tuple::point(0., 0., 1.);
 
         assert_eq!(half_result, r_half * p);
@@ -151,7 +151,7 @@ mod tests {
         let r_half = rotation_x(f64::consts::FRAC_PI_4);
         let inv = r_half.inverse();
 
-        let result = Tuple::point(0., 2f64.sqrt()/2., -2f64.sqrt()/2.);
+        let result = Tuple::point(0., 2f64.sqrt() / 2., -2f64.sqrt() / 2.);
 
         assert_eq!(result, inv * p);
     }
@@ -162,7 +162,7 @@ mod tests {
         let r_half = rotation_y(f64::consts::FRAC_PI_4);
         let r_full = rotation_y(f64::consts::FRAC_PI_2);
 
-        let half_result = Tuple::point(2f64.sqrt()/2., 0., 2f64.sqrt()/2.);
+        let half_result = Tuple::point(2f64.sqrt() / 2., 0., 2f64.sqrt() / 2.);
         let full_result = Tuple::point(1., 0., 0.);
 
         assert_eq!(half_result, r_half * p);
@@ -175,7 +175,7 @@ mod tests {
         let r_half = rotation_z(f64::consts::FRAC_PI_4);
         let r_full = rotation_z(f64::consts::FRAC_PI_2);
 
-        let half_result = Tuple::point(-2f64.sqrt()/2., 2f64.sqrt()/2., 0.);
+        let half_result = Tuple::point(-2f64.sqrt() / 2., 2f64.sqrt() / 2., 0.);
         let full_result = Tuple::point(-1., 0., 0.);
 
         assert_eq!(half_result, r_half * p);

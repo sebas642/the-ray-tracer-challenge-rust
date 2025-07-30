@@ -1,8 +1,8 @@
-use super::color::{Color, BLACK, WHITE};
-use super::tuple::Tuple;
+use super::color::{BLACK, Color, WHITE};
 use super::light::PointLight;
 use super::pattern;
 use super::shape::BoxShape;
+use super::tuple::Tuple;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Material {
@@ -11,7 +11,7 @@ pub struct Material {
     pub ambient: f64,
     pub diffuse: f64,
     pub specular: f64,
-    pub shininess: f64
+    pub shininess: f64,
 }
 
 impl Material {
@@ -22,21 +22,30 @@ impl Material {
         ambient: Option<f64>,
         diffuse: Option<f64>,
         specular: Option<f64>,
-        shininess: Option<f64>) -> Material {
+        shininess: Option<f64>,
+    ) -> Material {
         Material {
             color: color.unwrap_or(WHITE),
             pattern,
             ambient: ambient.unwrap_or(0.1),
             diffuse: diffuse.unwrap_or(0.9),
             specular: specular.unwrap_or(0.9),
-            shininess: shininess.unwrap_or(200.)
+            shininess: shininess.unwrap_or(200.),
         }
     }
 
-    pub fn lighting(&self, object: &BoxShape, &light: &PointLight, &point: &Tuple, &eyev: &Tuple, &normalv: &Tuple, in_shadow: bool) -> Color {
+    pub fn lighting(
+        &self,
+        object: &BoxShape,
+        &light: &PointLight,
+        &point: &Tuple,
+        &eyev: &Tuple,
+        &normalv: &Tuple,
+        in_shadow: bool,
+    ) -> Color {
         let color = match self.pattern {
             Some(p) => pattern::stripe_at_object(&p, object, &point),
-            _ => self.color
+            _ => self.color,
         };
         let effective_color = color * light.intensity;
         let lightv = (light.position - point).normalize();
@@ -107,7 +116,17 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 0., -10.), &WHITE);
 
         let result = Color::new(1.9, 1.9, 1.9);
-        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, false));
+        assert_eq!(
+            result,
+            m.lighting(
+                &Sphere::default_boxed(),
+                &light,
+                &position,
+                &eyev,
+                &normalv,
+                false
+            )
+        );
     }
 
     #[test]
@@ -115,12 +134,22 @@ mod tests {
         let m = Material::default();
         let position = Tuple::point(0., 0., 0.);
 
-        let eyev = Tuple::vector(0., 2f64.sqrt()/2., -2f64.sqrt()/2.);
+        let eyev = Tuple::vector(0., 2f64.sqrt() / 2., -2f64.sqrt() / 2.);
         let normalv = Tuple::vector(0., 0., -1.);
         let light = PointLight::new(&Tuple::point(0., 0., -10.), &WHITE);
 
         let result = WHITE;
-        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, false));
+        assert_eq!(
+            result,
+            m.lighting(
+                &Sphere::default_boxed(),
+                &light,
+                &position,
+                &eyev,
+                &normalv,
+                false
+            )
+        );
     }
 
     #[test]
@@ -133,7 +162,17 @@ mod tests {
         let light = PointLight::new(&Tuple::point(0., 10., -10.), &WHITE);
 
         let result = Color::new(0.7364, 0.7364, 0.7364);
-        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, false));
+        assert_eq!(
+            result,
+            m.lighting(
+                &Sphere::default_boxed(),
+                &light,
+                &position,
+                &eyev,
+                &normalv,
+                false
+            )
+        );
     }
 
     #[test]
@@ -141,12 +180,22 @@ mod tests {
         let m = Material::default();
         let position = Tuple::point(0., 0., 0.);
 
-        let eyev = Tuple::vector(0., -2f64.sqrt()/2., -2f64.sqrt()/2.);
+        let eyev = Tuple::vector(0., -2f64.sqrt() / 2., -2f64.sqrt() / 2.);
         let normalv = Tuple::vector(0., 0., -1.);
         let light = PointLight::new(&Tuple::point(0., 10., -10.), &WHITE);
 
         let result = Color::new(1.6364, 1.6364, 1.6364);
-        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, false));
+        assert_eq!(
+            result,
+            m.lighting(
+                &Sphere::default_boxed(),
+                &light,
+                &position,
+                &eyev,
+                &normalv,
+                false
+            )
+        );
     }
 
     #[test]
@@ -160,7 +209,17 @@ mod tests {
         let in_shadow = false;
 
         let result = Color::new(0.1, 0.1, 0.1);
-        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, in_shadow));
+        assert_eq!(
+            result,
+            m.lighting(
+                &Sphere::default_boxed(),
+                &light,
+                &position,
+                &eyev,
+                &normalv,
+                in_shadow
+            )
+        );
     }
 
     #[test]
@@ -174,7 +233,17 @@ mod tests {
         let in_shadow = true;
 
         let result = Color::new(0.1, 0.1, 0.1);
-        assert_eq!(result, m.lighting(&Sphere::default_boxed(), &light, &position, &eyev, &normalv, in_shadow));
+        assert_eq!(
+            result,
+            m.lighting(
+                &Sphere::default_boxed(),
+                &light,
+                &position,
+                &eyev,
+                &normalv,
+                in_shadow
+            )
+        );
     }
 
     #[test]
@@ -191,7 +260,27 @@ mod tests {
         let in_shadow = true;
 
         let s = Sphere::default_boxed();
-        assert_eq!(WHITE, m.lighting(&s, &light, &Tuple::point(0.9, 0., 0.), &eyev, &normalv, in_shadow));
-        assert_eq!(BLACK, m.lighting(&s, &light, &Tuple::point(1.1, 0., 0.), &eyev, &normalv, in_shadow));
+        assert_eq!(
+            WHITE,
+            m.lighting(
+                &s,
+                &light,
+                &Tuple::point(0.9, 0., 0.),
+                &eyev,
+                &normalv,
+                in_shadow
+            )
+        );
+        assert_eq!(
+            BLACK,
+            m.lighting(
+                &s,
+                &light,
+                &Tuple::point(1.1, 0., 0.),
+                &eyev,
+                &normalv,
+                in_shadow
+            )
+        );
     }
 }

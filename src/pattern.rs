@@ -7,17 +7,24 @@ use super::tuple::Tuple;
 pub struct StripePattern {
     pub first: Color,
     pub second: Color,
-    pub transform: Matrix
+    pub transform: Matrix,
 }
 
 pub fn stripe_pattern(first: Color, second: Color, transform: Option<Matrix>) -> StripePattern {
-    let s = StripePattern{first, second, transform: transform.unwrap_or_default()};
+    let s = StripePattern {
+        first,
+        second,
+        transform: transform.unwrap_or_default(),
+    };
     s
 }
 
 pub fn stripe_at(pattern: &StripePattern, point: &Tuple) -> Color {
-    if point.x.floor() as u32 % 2 == 0 {pattern.first}
-    else {pattern.second}
+    if point.x.floor() as u32 % 2 == 0 {
+        pattern.first
+    } else {
+        pattern.second
+    }
 }
 
 pub fn stripe_at_object(pattern: &StripePattern, object: &BoxShape, &world_point: &Tuple) -> Color {

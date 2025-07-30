@@ -22,7 +22,10 @@ fn as_rgb255(color: f64) -> i32 {
 
 // FIXME: This works in ImageMagick but crashes EOG for some values
 pub fn canvas_to_ppm(canvas: Canvas) -> String {
-    let mut s = format!("P3\n{} {}\n{}\n", canvas.width, canvas.height, MAX_COLOR_VALUE);
+    let mut s = format!(
+        "P3\n{} {}\n{}\n",
+        canvas.width, canvas.height, MAX_COLOR_VALUE
+    );
 
     for y in 0..canvas.height {
         for x in 0..canvas.width {
@@ -36,10 +39,9 @@ pub fn canvas_to_ppm(canvas: Canvas) -> String {
 
             let rgb_tuple = format!("{} {} {}", red, green, blue);
             s.push_str(&rgb_tuple);
-            if (x > 0 && x % MAX_PIXELS_PER_LINE == 0) || x == (canvas.width -1) {
+            if (x > 0 && x % MAX_PIXELS_PER_LINE == 0) || x == (canvas.width - 1) {
                 s.push('\n');
-            }
-            else {
+            } else {
                 s.push(' ');
             }
         }
@@ -55,7 +57,7 @@ mod tests {
 
     #[test]
     fn constructing_the_ppm_header() {
-        let c = Canvas::new(5,3);
+        let c = Canvas::new(5, 3);
         let ppm = canvas_to_ppm(c);
         let mut lines = ppm.lines();
 
@@ -66,7 +68,7 @@ mod tests {
 
     #[test]
     fn constructing_the_ppm_pixel_data() {
-        let mut c = Canvas::new(5,3);
+        let mut c = Canvas::new(5, 3);
         let c1 = Color::new(1.5, 0., 0.);
         let c2 = Color::new(0., 0.505, 0.);
         let c3 = Color::new(-0.5, 0., 1.);
@@ -79,7 +81,9 @@ mod tests {
         let mut lines = ppm.lines();
 
         // Skip header
-        lines.next(); lines.next(); lines.next();
+        lines.next();
+        lines.next();
+        lines.next();
 
         assert_eq!(Some("255 0 0 0 0 0 0 0 0 0 0 0 0 0 0"), lines.next());
         assert_eq!(Some("0 0 0 0 0 0 0 128 0 0 0 0 0 0 0"), lines.next());
@@ -95,17 +99,31 @@ mod tests {
         let mut lines = ppm.lines();
 
         // Skip header
-        lines.next(); lines.next(); lines.next();
+        lines.next();
+        lines.next();
+        lines.next();
 
-        assert_eq!(Some("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153"), lines.next());
-        assert_eq!(Some("255 204 153 255 204 153 255 204 153 255 204 153"), lines.next());
-        assert_eq!(Some("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153"), lines.next());
-        assert_eq!(Some("255 204 153 255 204 153 255 204 153 255 204 153"), lines.next());
+        assert_eq!(
+            Some("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153"),
+            lines.next()
+        );
+        assert_eq!(
+            Some("255 204 153 255 204 153 255 204 153 255 204 153"),
+            lines.next()
+        );
+        assert_eq!(
+            Some("255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153"),
+            lines.next()
+        );
+        assert_eq!(
+            Some("255 204 153 255 204 153 255 204 153 255 204 153"),
+            lines.next()
+        );
     }
 
     #[test]
     fn ppm_files_are_terminated_by_newline() {
-        let c = Canvas::new(5,3);
+        let c = Canvas::new(5, 3);
         let ppm = canvas_to_ppm(c);
 
         assert_eq!(Some('\n'), ppm.chars().last());

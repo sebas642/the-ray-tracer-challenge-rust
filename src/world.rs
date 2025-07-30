@@ -1,10 +1,10 @@
-use super::color::{Color, BLACK, WHITE};
+use super::color::{BLACK, Color, WHITE};
 use super::comps::Comps;
 use super::intersection::{Intersection, Intersections};
 use super::light::PointLight;
 use super::material::Material;
 use super::ray::Ray;
-use super::shape::{BoxShape};
+use super::shape::BoxShape;
 use super::sphere::Sphere;
 use super::transform;
 use super::tuple::Tuple;
@@ -12,7 +12,7 @@ use super::tuple::Tuple;
 #[derive(PartialEq)]
 pub struct World {
     pub light: Option<PointLight>,
-    pub shapes: Vec<BoxShape>
+    pub shapes: Vec<BoxShape>,
 }
 
 impl World {
@@ -21,15 +21,26 @@ impl World {
     }
 
     pub fn intersect(&self, &r: &Ray) -> Intersections {
-        let mut intersections : Vec<Intersection> = vec![];
-        self.shapes.iter().for_each(|shape| shape.intersect(r).iter().for_each(|i| intersections.push(i.clone())));
+        let mut intersections: Vec<Intersection> = vec![];
+        self.shapes.iter().for_each(|shape| {
+            shape
+                .intersect(r)
+                .iter()
+                .for_each(|i| intersections.push(i.clone()))
+        });
         Intersections::new(intersections)
     }
 
     pub fn shade_hit(&self, comps: &Comps) -> Color {
         if self.light != None {
             comps.object.material().lighting(
-                &comps.object, &self.light.unwrap(), &comps.point, &comps.eyev, &comps.normalv, self.is_shadowed(&comps.over_point))
+                &comps.object,
+                &self.light.unwrap(),
+                &comps.point,
+                &comps.eyev,
+                &comps.normalv,
+                self.is_shadowed(&comps.over_point),
+            )
         } else {
             BLACK
         }
@@ -69,7 +80,12 @@ impl Default for World {
         let diffuse = 0.7;
         let specular = 0.2;
         let material = Material::new(
-            Some(Color::new(0.8, 1., 0.6)), None, None, Some(diffuse), Some(specular), None
+            Some(Color::new(0.8, 1., 0.6)),
+            None,
+            None,
+            Some(diffuse),
+            Some(specular),
+            None,
         );
         let s1 = Sphere::new_boxed(None, Some(material));
         let s2 = Sphere::new_boxed(Some(transform::scaling(0.5, 0.5, 0.5)), None);
@@ -96,7 +112,12 @@ mod tests {
         let diffuse = 0.7;
         let specular = 0.2;
         let material = Material::new(
-            Some(Color::new(0.8, 1., 0.6)), None, None, Some(diffuse), Some(specular), None
+            Some(Color::new(0.8, 1., 0.6)),
+            None,
+            None,
+            Some(diffuse),
+            Some(specular),
+            None,
         );
         let s1 = Sphere::new_boxed(None, Some(material));
         let s2 = Sphere::new_boxed(Some(transform::scaling(0.5, 0.5, 0.5)), None);
@@ -136,7 +157,10 @@ mod tests {
     #[test]
     fn shading_an_intersection_from_the_inside() {
         let light = PointLight::new(&Tuple::point(0., 0.25, 0.), &WHITE);
-        let w = World {light: Some(light), ..Default::default() };
+        let w = World {
+            light: Some(light),
+            ..Default::default()
+        };
         let r = Ray::new(&Tuple::point(0., 0., 0.), &Tuple::vector(0., 0., 1.));
         let s = w.shapes[1].clone();
 
@@ -183,7 +207,10 @@ mod tests {
     #[test]
     fn the_color_with_an_intersection_behind_the_ray() {
         let mut w = World::default();
-        let material = Material {ambient: 1., ..*w.shapes[0].material()};
+        let material = Material {
+            ambient: 1.,
+            ..*w.shapes[0].material()
+        };
         w.shapes.first_mut().unwrap().set_material(material);
         w.shapes.last_mut().unwrap().set_material(material);
 

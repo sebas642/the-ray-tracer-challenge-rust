@@ -1,15 +1,18 @@
-use super::tuple::Tuple;
 use super::matrix::Matrix;
+use super::tuple::Tuple;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Ray {
     pub origin: Tuple,
-    pub direction: Tuple
+    pub direction: Tuple,
 }
 
 impl Ray {
     pub fn new(origin: &Tuple, direction: &Tuple) -> Ray {
-        Ray {origin: *origin, direction: *direction}
+        Ray {
+            origin: *origin,
+            direction: *direction,
+        }
     }
 
     pub fn position(&self, t: f64) -> Tuple {

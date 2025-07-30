@@ -44,7 +44,14 @@ fn main() {
                 let normal = hit.object.normal_at(&point);
                 let eye = -r.direction;
 
-                let color = hit.object.material().lighting(&hit.object, &light, &point, &eye, &normal, false);
+                let color = hit.object.material().lighting(
+                    &hit.object,
+                    &light,
+                    &point,
+                    &eye,
+                    &normal,
+                    false,
+                );
                 canvas.write_pixel(x, y, color);
             }
         }

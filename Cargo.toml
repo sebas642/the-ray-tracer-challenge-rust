@@ -2,7 +2,7 @@
 name = "the-ray-tracer-challenge-rust"
 version = "0.1.0"
 authors = ["Sébastien Côté <sebas642@gmail.com>"]
-edition = "2018"
+edition = "2024"
 default-run = "ch10"
 
 readme = "README.md"

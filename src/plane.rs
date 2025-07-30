@@ -2,8 +2,8 @@ use super::intersection::{Intersection, Intersections};
 use super::material::Material;
 use super::matrix::Matrix;
 use super::ray::Ray;
-use super::shape::{Shape, BoxShape};
-use super::tuple::{Tuple, POINT_ORIGIN};
+use super::shape::{BoxShape, Shape};
+use super::tuple::{POINT_ORIGIN, Tuple};
 use super::utils::EPSILON;
 
 use std::any::Any;
@@ -12,7 +12,7 @@ use std::any::Any;
 pub struct Plane {
     origin: Tuple,
     transform: Matrix,
-    material: Material
+    material: Material,
 }
 
 impl Plane {
@@ -20,7 +20,7 @@ impl Plane {
         Self {
             origin: POINT_ORIGIN,
             transform: transform.unwrap_or_default(),
-            material: material.unwrap_or_default()
+            material: material.unwrap_or_default(),
         }
     }
 
