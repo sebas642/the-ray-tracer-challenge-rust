@@ -20,7 +20,7 @@ pub fn stripe_pattern(first: Color, second: Color, transform: Option<Matrix>) ->
 }
 
 pub fn stripe_at(pattern: &StripePattern, point: &Tuple) -> Color {
-    if point.x.floor() as u32 % 2 == 0 {
+    if point.x.floor().abs() as u32 % 2 == 0 {
         pattern.first
     } else {
         pattern.second
