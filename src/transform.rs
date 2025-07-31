@@ -28,7 +28,7 @@ pub fn scaling(x: f64, y: f64, z: f64) -> Matrix {
 pub fn rotation_x(r: f64) -> Matrix {
     let mut m = MATRIX_IDENTITY;
     m.set(1, 1, r.cos());
-    m.set(1, 2, -1. * r.sin());
+    m.set(1, 2, -r.sin());
     m.set(2, 1, r.sin());
     m.set(2, 2, r.cos());
     m
@@ -38,7 +38,7 @@ pub fn rotation_y(r: f64) -> Matrix {
     let mut m = MATRIX_IDENTITY;
     m.set(0, 0, r.cos());
     m.set(0, 2, r.sin());
-    m.set(2, 0, -1. * r.sin());
+    m.set(2, 0, -r.sin());
     m.set(2, 2, r.cos());
     m
 }
@@ -46,7 +46,7 @@ pub fn rotation_y(r: f64) -> Matrix {
 pub fn rotation_z(r: f64) -> Matrix {
     let mut m = MATRIX_IDENTITY;
     m.set(0, 0, r.cos());
-    m.set(0, 1, -1. * r.sin());
+    m.set(0, 1, -r.sin());
     m.set(1, 0, r.sin());
     m.set(1, 1, r.cos());
     m

@@ -3,14 +3,13 @@ use super::material::Material;
 use super::matrix::Matrix;
 use super::ray::Ray;
 use super::shape::{BoxShape, Shape};
-use super::tuple::{POINT_ORIGIN, Tuple};
+use super::tuple::Tuple;
 use super::utils::EPSILON;
 
 use std::any::Any;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct Plane {
-    origin: Tuple,
     transform: Matrix,
     material: Material,
 }
@@ -18,7 +17,6 @@ pub struct Plane {
 impl Plane {
     pub fn new(transform: Option<Matrix>, material: Option<Material>) -> Self {
         Self {
-            origin: POINT_ORIGIN,
             transform: transform.unwrap_or_default(),
             material: material.unwrap_or_default(),
         }
@@ -51,11 +49,11 @@ impl Shape for Plane {
     }
 
     fn box_eq(&self, other: &dyn Any) -> bool {
-        other.downcast_ref::<Self>().map_or(false, |a| self == a)
+        other.downcast_ref::<Self>() == Some(self)
     }
 
     fn box_clone(&self) -> BoxShape {
-        Box::new(*self)
+        Box::new(self.clone())
     }
 
     fn transformation(&self) -> Matrix {

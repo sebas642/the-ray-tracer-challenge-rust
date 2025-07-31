@@ -32,7 +32,7 @@ impl World {
     }
 
     pub fn shade_hit(&self, comps: &Comps) -> Color {
-        if self.light != None {
+        if self.light.is_some() {
             comps.object.material().lighting(
                 &comps.object,
                 &self.light.unwrap(),
@@ -58,7 +58,7 @@ impl World {
     }
 
     pub fn is_shadowed(&self, &point: &Tuple) -> bool {
-        if self.light == None {
+        if self.light.is_none() {
             false
         } else {
             let v = self.light.unwrap().position - point;
@@ -68,7 +68,7 @@ impl World {
             let r = Ray::new(&point, &direction);
             let intersections = self.intersect(&r);
             let h = intersections.hit();
-            h != None && h.unwrap().t < distance
+            h.is_some() && h.unwrap().t < distance
         }
     }
 }
@@ -208,10 +208,14 @@ mod tests {
     fn the_color_with_an_intersection_behind_the_ray() {
         let mut w = World::default();
         let material = Material {
+            color: w.shapes[0].material().color,
+            pattern: w.shapes[0].material().pattern.clone(),
             ambient: 1.,
-            ..*w.shapes[0].material()
+            diffuse: w.shapes[0].material().diffuse,
+            specular: w.shapes[0].material().specular,
+            shininess: w.shapes[0].material().shininess,
         };
-        w.shapes.first_mut().unwrap().set_material(material);
+        w.shapes.first_mut().unwrap().set_material(material.clone());
         w.shapes.last_mut().unwrap().set_material(material);
 
         let r = Ray::new(&Tuple::point(0., 0., 0.75), &Tuple::vector(0., 0., -1.));

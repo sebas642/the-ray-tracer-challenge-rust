@@ -1,13 +1,13 @@
 use super::color::{BLACK, Color, WHITE};
 use super::light::PointLight;
-use super::pattern;
+use super::pattern::PatternType;
 use super::shape::BoxShape;
 use super::tuple::Tuple;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Material {
     pub color: Color,
-    pub pattern: Option<pattern::StripePattern>,
+    pub pattern: Option<PatternType>,
     pub ambient: f64,
     pub diffuse: f64,
     pub specular: f64,
@@ -18,7 +18,7 @@ impl Material {
     // FIXME: This is terrible... Use the builder pattern instead? Or use mutable structs.
     pub fn new(
         color: Option<Color>,
-        pattern: Option<pattern::StripePattern>,
+        pattern: Option<PatternType>,
         ambient: Option<f64>,
         diffuse: Option<f64>,
         specular: Option<f64>,
@@ -43,8 +43,8 @@ impl Material {
         &normalv: &Tuple,
         in_shadow: bool,
     ) -> Color {
-        let color = match self.pattern {
-            Some(p) => pattern::stripe_at_object(&p, object, &point),
+        let color = match &self.pattern {
+            Some(p) => p.pattern_at_shape(object, &point),
             _ => self.color,
         };
         let effective_color = color * light.intensity;
@@ -91,7 +91,7 @@ impl Default for Material {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::sphere::Sphere;
+    use crate::{matrix::Matrix, pattern, sphere::Sphere};
 
     #[test]
     fn the_default_material() {
@@ -249,7 +249,11 @@ mod tests {
     #[test]
     fn lighting_with_a_pattern_applied() {
         let mut m = Material::default();
-        m.pattern = Some(pattern::stripe_pattern(WHITE, BLACK, None));
+        m.pattern = Some(PatternType::Stripe(pattern::StripePattern {
+            first: WHITE,
+            second: BLACK,
+            transform: Matrix::default(),
+        }));
         m.ambient = 1.;
         m.diffuse = 0.;
         m.specular = 0.;

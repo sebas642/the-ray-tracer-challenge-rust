@@ -5,7 +5,7 @@
 A partial implementation of [The Ray Tracer Challenge](https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/) book using Rust.
 This is a side project to learn the Rust programming language.
 
-Debug mode is extremely slow. Sample apps should be executed in release mode which is much faster.
+Debug mode is extremely slow. Sample apps should be executed in release mode.
 
 ## Chapters
 
@@ -18,7 +18,7 @@ Debug mode is extremely slow. Sample apps should be executed in release mode whi
 - [x] Chapter 7 - Making a Scene
 - [x] Chapter 8 - Shadows
 - [x] Chapter 9 - Planes
-- [ ] Chapter 10 - Patterns
+- [x] Chapter 10 - Patterns
 - [ ] Chapter 11 - Reflection and Refraction
 - [ ] Chapter 12 - Cubes
 - [ ] Chapter 13 - Cylinders

@@ -31,14 +31,14 @@ fn main() {
     for y in 0..CANVAS_SIZE {
         let world_y = half - pixel_size * y as f64;
         for x in 0..CANVAS_SIZE {
-            let world_x = -1. * half + pixel_size * x as f64;
+            let world_x = -half + pixel_size * x as f64;
             let position = Tuple::point(world_x, world_y, wall_z);
             let direction = position - ray_origin;
 
             let r = Ray::new(&ray_origin, &direction.normalize());
             let xs = shape.intersect(r);
 
-            if xs.hit() != None {
+            if xs.hit().is_some() {
                 let hit = xs.hit().unwrap();
                 let point = r.position(hit.t);
                 let normal = hit.object.normal_at(&point);

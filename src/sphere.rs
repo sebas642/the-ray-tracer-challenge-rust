@@ -7,7 +7,7 @@ use super::tuple::{POINT_ORIGIN, Tuple};
 
 use std::any::Any;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 pub struct Sphere {
     origin: Tuple,
     transform: Matrix,
@@ -50,11 +50,11 @@ impl Shape for Sphere {
     }
 
     fn box_eq(&self, other: &dyn Any) -> bool {
-        other.downcast_ref::<Self>().map_or(false, |a| self == a)
+        other.downcast_ref::<Self>() == Some(self)
     }
 
     fn box_clone(&self) -> BoxShape {
-        Box::new(*self)
+        Box::new(self.clone())
     }
 
     fn transformation(&self) -> Matrix {
@@ -84,11 +84,11 @@ impl Shape for Sphere {
         let mut xs: Vec<Intersection> = Vec::new();
         if d >= 0. {
             xs.push(Intersection::new(
-                (-1. * b - d.sqrt()) / (2. * a),
+                (-b - d.sqrt()) / (2. * a),
                 self.box_clone(),
             ));
             xs.push(Intersection::new(
-                (-1. * b + d.sqrt()) / (2. * a),
+                (-b + d.sqrt()) / (2. * a),
                 self.box_clone(),
             ));
         }
@@ -283,7 +283,7 @@ mod tests {
             ambient: 1.,
             ..Default::default()
         };
-        let s = Sphere::new(None, Some(m));
+        let s = Sphere::new(None, Some(m.clone()));
 
         assert_eq!(m, s.material);
         assert_eq!(1., s.material.ambient);

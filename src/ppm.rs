@@ -37,7 +37,7 @@ pub fn canvas_to_ppm(canvas: Canvas) -> String {
             let green = as_rgb255(pixel.g);
             let blue = as_rgb255(pixel.b);
 
-            let rgb_tuple = format!("{} {} {}", red, green, blue);
+            let rgb_tuple = format!("{red} {green} {blue}");
             s.push_str(&rgb_tuple);
             if (x > 0 && x % MAX_PIXELS_PER_LINE == 0) || x == (canvas.width - 1) {
                 s.push('\n');

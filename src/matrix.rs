@@ -108,7 +108,7 @@ impl Matrix {
         if (row + column) % 2 == 0 {
             return minor;
         }
-        minor * -1.
+        -minor
     }
 
     pub fn is_invertible(&self) -> bool {

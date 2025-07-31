@@ -22,7 +22,7 @@ fn main() {
         Some(0.),
         None,
     );
-    let floor = Sphere::new_boxed(Some(floor_tr), Some(floor_m));
+    let floor = Sphere::new_boxed(Some(floor_tr), Some(floor_m.clone()));
 
     let left_wall_tr = transform::transforms(&[
         floor_tr,
@@ -30,7 +30,7 @@ fn main() {
         transform::rotation_y(-f64::consts::FRAC_PI_4),
         transform::translation(0., 0., 5.),
     ]);
-    let left_wall = Sphere::new_boxed(Some(left_wall_tr), Some(floor_m));
+    let left_wall = Sphere::new_boxed(Some(left_wall_tr), Some(floor_m.clone()));
 
     let right_wall_tr = transform::transforms(&[
         floor_tr,
@@ -38,7 +38,7 @@ fn main() {
         transform::rotation_y(f64::consts::FRAC_PI_4),
         transform::translation(0., 0., 5.),
     ]);
-    let right_wall = Sphere::new_boxed(Some(right_wall_tr), Some(floor_m));
+    let right_wall = Sphere::new_boxed(Some(right_wall_tr), Some(floor_m.clone()));
 
     let middle_m = Material::new(
         Some(Color::new(0.1, 1., 0.5)),
