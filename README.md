@@ -3,9 +3,21 @@
 ![Build Status](https://github.com/sebas642/the-ray-tracer-challenge-rust/workflows/Rust/badge.svg)
 
 A partial implementation of [The Ray Tracer Challenge](https://pragprog.com/titles/jbtracer/the-ray-tracer-challenge/) book using Rust.
-This is a side project to learn the Rust programming language.
+This is a side project to learn and experiment with the Rust programming language. Performance and idiomatic Rust code are not the main goals.
 
-Debug mode is extremely slow. Sample apps should be executed in release mode.
+Debug mode is extremely slow. Sample apps should be executed in release mode. The output images are in PPM format.
+
+To execute the latest chapter and show the resulting image:
+
+```bash
+cargo run --release | display
+```
+
+To get help on the command line options, you can execute:
+
+```bash
+cargo run --release -- --help
+```
 
 ## Chapters
 
@@ -19,7 +31,7 @@ Debug mode is extremely slow. Sample apps should be executed in release mode.
 - [x] Chapter 8 - Shadows
 - [x] Chapter 9 - Planes
 - [x] Chapter 10 - Patterns
-- [ ] Chapter 11 - Reflection and Refraction
+- [x] Chapter 11 - Reflection and Refraction
 - [ ] Chapter 12 - Cubes
 - [ ] Chapter 13 - Cylinders
 - [ ] Chapter 14 - Groups

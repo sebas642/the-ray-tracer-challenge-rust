@@ -9,6 +9,7 @@ pub enum PatternType {
     Gradient(GradientPattern),
     Ring(RingPattern),
     Stripe(StripePattern),
+    Test(TestPattern),
 }
 
 impl PatternType {
@@ -18,6 +19,7 @@ impl PatternType {
             PatternType::Gradient(p) => p.pattern_at(point),
             PatternType::Ring(p) => p.pattern_at(point),
             PatternType::Stripe(p) => p.pattern_at(point),
+            PatternType::Test(p) => p.pattern_at(point),
         }
     }
     pub fn pattern_at_shape(&self, shape: &BoxShape, world_point: &Tuple) -> Color {
@@ -37,6 +39,10 @@ impl PatternType {
                 p.pattern_at(&pattern_point)
             }
             PatternType::Stripe(p) => {
+                let pattern_point = p.transform.inverse() * object_point;
+                p.pattern_at(&pattern_point)
+            }
+            PatternType::Test(p) => {
                 let pattern_point = p.transform.inverse() * object_point;
                 p.pattern_at(&pattern_point)
             }
@@ -149,20 +155,80 @@ impl StripePattern {
     }
 }
 
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct TestPattern {
+    pub transform: Matrix,
+}
+
+impl TestPattern {
+    pub fn new(transform: Option<Matrix>) -> Self {
+        Self {
+            transform: transform.unwrap_or_default(),
+        }
+    }
+
+    pub fn pattern_at(&self, point: &Tuple) -> Color {
+        Color::new(point.x, point.y, point.z)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::color::{BLACK, WHITE};
+    use crate::matrix::MATRIX_IDENTITY;
     use crate::pattern::PatternType;
     use crate::sphere::Sphere;
     use crate::transform;
+
+    #[test]
+    fn create_a_test_pattern() {
+        let p = TestPattern::new(None);
+        assert_eq!(p.transform, MATRIX_IDENTITY);
+    }
+
+    #[test]
+    fn a_test_pattern_with_a_transformation() {
+        let p = TestPattern::new(Some(transform::translation(1., 2., 3.)));
+        assert_eq!(p.transform, transform::translation(1., 2., 3.));
+    }
+
+    #[test]
+    fn a_test_pattern_with_an_object_transformation() {
+        let p = TestPattern::new(None);
+        let s = Sphere::new_boxed(Some(transform::scaling(2., 2., 2.)), None);
+        assert_eq!(
+            Color::new(1., 1.5, 2.),
+            PatternType::Test(p).pattern_at_shape(&s, &Tuple::point(2., 3., 4.))
+        );
+    }
+
+    #[test]
+    fn a_test_pattern_with_a_pattern_transformation() {
+        let p = TestPattern::new(Some(transform::scaling(2., 2., 2.)));
+        let s = Sphere::new_boxed(None, None);
+        assert_eq!(
+            Color::new(1., 1.5, 2.),
+            PatternType::Test(p).pattern_at_shape(&s, &Tuple::point(2., 3., 4.))
+        );
+    }
+
+    #[test]
+    fn a_test_pattern_with_both_an_object_and_a_pattern_transformation() {
+        let p = TestPattern::new(Some(transform::translation(0.5, 1., 1.5)));
+        let s = Sphere::new_boxed(Some(transform::scaling(2., 2., 2.)), None);
+        assert_eq!(
+            Color::new(0.75, 0.5, 0.25),
+            PatternType::Test(p).pattern_at_shape(&s, &Tuple::point(2.5, 3., 3.5))
+        );
+    }
 
     #[test]
     fn create_a_stripe_pattern() {
         let p = StripePattern::new(WHITE, BLACK, None);
         assert_eq!(p.first, WHITE);
         assert_eq!(p.second, BLACK);
-        assert_eq!(p.transform, Matrix::default());
+        assert_eq!(p.transform, MATRIX_IDENTITY);
     }
 
     #[test]

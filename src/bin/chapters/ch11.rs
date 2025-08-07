@@ -1,11 +1,11 @@
 extern crate the_ray_tracer_challenge_rust as tracer;
 use tracer::camera::Camera;
+use tracer::canvas::Canvas;
 use tracer::color::{Color, WHITE};
 use tracer::light::PointLight;
 use tracer::material::Material;
 use tracer::pattern::{CheckersPattern, GradientPattern, PatternType, StripePattern};
 use tracer::plane::Plane;
-use tracer::ppm;
 use tracer::shape::BoxShape;
 use tracer::sphere::Sphere;
 use tracer::transform;
@@ -28,6 +28,9 @@ fn floor() -> BoxShape {
         None,
         None,
         Some(0.),
+        None,
+        Some(0.2),
+        None,
         None,
     );
 
@@ -54,11 +57,14 @@ fn wall() -> BoxShape {
             None,
             Some(0.),
             None,
+            None,
+            None,
+            None,
         )),
     )
 }
 
-fn main() {
+pub fn ch11() -> Canvas {
     let s_pattern_tr = transform::transforms(&[
         transform::rotation_x(2.),
         transform::rotation_y(2.),
@@ -77,6 +83,9 @@ fn main() {
         Some(0.7),
         Some(0.3),
         None,
+        None,
+        None,
+        None,
     );
     let middle_sphere =
         Sphere::new_boxed(Some(transform::translation(-0.5, 1., 0.5)), Some(middle_m));
@@ -93,6 +102,9 @@ fn main() {
         Some(0.7),
         Some(0.3),
         None,
+        None,
+        None,
+        None,
     );
     let right_sphere = Sphere::new_boxed(Some(right_tr), Some(right_m));
 
@@ -101,11 +113,14 @@ fn main() {
         transform::translation(-1.5, 0.33, -0.75),
     ]);
     let left_m = Material::new(
-        Some(Color::new(1., 0.8, 0.1)),
+        Some(Color::new(1., 0.3, 0.1)),
         None,
         None,
         Some(0.7),
         Some(0.3),
+        None,
+        Some(0.9),
+        Some(0.9),
         None,
     );
     let left_sphere = Sphere::new_boxed(Some(left_tr), Some(left_m));
@@ -122,6 +137,5 @@ fn main() {
     let c_transform = view_transform(&c_from, &c_to, &c_up);
     let camera = Camera::new(640, 480, f64::consts::FRAC_PI_3, Some(c_transform));
 
-    let canvas = camera.render(&world);
-    println!("{}", ppm::canvas_to_ppm(canvas));
+    camera.render(&world)
 }

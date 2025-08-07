@@ -12,10 +12,12 @@ pub struct Material {
     pub diffuse: f64,
     pub specular: f64,
     pub shininess: f64,
+    pub reflective: f64,
+    pub transparency: f64,
+    pub refractive_index: f64,
 }
 
 impl Material {
-    // FIXME: This is terrible... Use the builder pattern instead? Or use mutable structs.
     pub fn new(
         color: Option<Color>,
         pattern: Option<PatternType>,
@@ -23,6 +25,9 @@ impl Material {
         diffuse: Option<f64>,
         specular: Option<f64>,
         shininess: Option<f64>,
+        reflective: Option<f64>,
+        transparency: Option<f64>,
+        refractive_index: Option<f64>,
     ) -> Material {
         Material {
             color: color.unwrap_or(WHITE),
@@ -31,6 +36,9 @@ impl Material {
             diffuse: diffuse.unwrap_or(0.9),
             specular: specular.unwrap_or(0.9),
             shininess: shininess.unwrap_or(200.),
+            reflective: reflective.unwrap_or(0.),
+            transparency: transparency.unwrap_or(0.),
+            refractive_index: refractive_index.unwrap_or(1.0),
         }
     }
 
@@ -84,14 +92,39 @@ impl Material {
 
 impl Default for Material {
     fn default() -> Self {
-        Material::new(None, None, None, None, None, None)
+        Material::new(None, None, None, None, None, None, None, None, None)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{matrix::Matrix, pattern, sphere::Sphere};
+    use crate::{
+        comps::Comps,
+        intersection::{Intersection, Intersections},
+        matrix::{MATRIX_IDENTITY, Matrix},
+        pattern,
+        ray::Ray,
+        sphere::Sphere,
+        utils::EPSILON,
+    };
+
+    fn glass_sphere(transform: Option<Matrix>, refractive_index: Option<f64>) -> BoxShape {
+        Sphere::new_boxed(
+            transform.or(Some(MATRIX_IDENTITY)),
+            Some(Material::new(
+                Some(Color::new(1., 0.2, 1.)),
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some(0.9),
+                Some(1.0),
+                refractive_index.or(Some(1.5)),
+            )),
+        )
+    }
 
     #[test]
     fn the_default_material() {
@@ -104,6 +137,9 @@ mod tests {
         assert_eq!(0.9, m.diffuse);
         assert_eq!(0.9, m.specular);
         assert_eq!(200., m.shininess);
+        assert_eq!(0., m.reflective);
+        assert_eq!(0., m.transparency);
+        assert_eq!(1., m.refractive_index);
     }
 
     #[test]
@@ -286,5 +322,70 @@ mod tests {
                 in_shadow
             )
         );
+    }
+
+    #[test]
+    fn finding_n1_and_n2_at_various_intersections() {
+        let s1 = glass_sphere(Some(crate::transform::scaling(2., 2., 2.)), Some(1.5));
+        let s2 = glass_sphere(
+            Some(crate::transform::translation(0., 0., -0.25)),
+            Some(2.0),
+        );
+        let s3 = glass_sphere(Some(crate::transform::translation(0., 0., 0.25)), Some(2.5));
+
+        let r = Ray::new(&Tuple::point(0., 0., -4.), &Tuple::vector(0., 0., 1.));
+
+        let i0 = Intersection::new(2., s1.clone());
+        let i1 = Intersection::new(2.75, s2.clone());
+        let i2 = Intersection::new(3.25, s3.clone());
+        let i3 = Intersection::new(4.75, s2.clone());
+        let i4 = Intersection::new(5.25, s3.clone());
+        let i5 = Intersection::new(6., s1.clone());
+
+        let xs = Intersections::new(vec![
+            i0.clone(),
+            i1.clone(),
+            i2.clone(),
+            i3.clone(),
+            i4.clone(),
+            i5.clone(),
+        ]);
+
+        let comps = Comps::prepare_computations(&i0, &r, Some(xs.clone()));
+        assert_eq!(comps.n1, 1.0);
+        assert_eq!(comps.n2, 1.5);
+
+        let comps = Comps::prepare_computations(&i1, &r, Some(xs.clone()));
+        assert_eq!(comps.n1, 1.5);
+        assert_eq!(comps.n2, 2.);
+
+        let comps = Comps::prepare_computations(&i2, &r, Some(xs.clone()));
+        assert_eq!(comps.n1, 2.0);
+        assert_eq!(comps.n2, 2.5);
+
+        let comps = Comps::prepare_computations(&i3, &r, Some(xs.clone()));
+        assert_eq!(comps.n1, 2.5);
+        assert_eq!(comps.n2, 2.5);
+
+        let comps = Comps::prepare_computations(&i4, &r, Some(xs.clone()));
+        assert_eq!(comps.n1, 2.5);
+        assert_eq!(comps.n2, 1.5);
+
+        let comps = Comps::prepare_computations(&i5, &r, Some(xs.clone()));
+        assert_eq!(comps.n1, 1.5);
+        assert_eq!(comps.n2, 1.0);
+    }
+
+    #[test]
+    fn the_under_point_is_offset_below_the_surface() {
+        let r = Ray::new(&Tuple::point(0., 0., -5.), &Tuple::vector(0., 0., 1.));
+        let s = glass_sphere(Some(crate::transform::translation(0., 0., 1.)), None);
+
+        let i = Intersection::new(5., s);
+        let xs = Intersections::new(vec![i.clone()]);
+        let comps = Comps::prepare_computations(&i, &r, Some(xs));
+
+        assert!(comps.under_point.z > EPSILON / 2.);
+        assert!(comps.point.z < comps.under_point.z);
     }
 }

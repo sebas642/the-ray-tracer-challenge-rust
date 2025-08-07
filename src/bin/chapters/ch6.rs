@@ -3,14 +3,13 @@ use tracer::canvas::Canvas;
 use tracer::color::{Color, WHITE};
 use tracer::light::PointLight;
 use tracer::material::Material;
-use tracer::ppm;
 use tracer::ray::Ray;
 use tracer::sphere::Sphere;
 use tracer::tuple::Tuple;
 
 use std::f64;
 
-fn main() {
+pub fn ch6() -> Canvas {
     const CANVAS_SIZE: usize = 200;
 
     // The light is at z = -5
@@ -21,7 +20,17 @@ fn main() {
     let half = wall_size / 2.;
 
     let mut canvas = Canvas::new(CANVAS_SIZE, CANVAS_SIZE);
-    let material = Material::new(Some(Color::new(1., 0.2, 1.)), None, None, None, None, None);
+    let material = Material::new(
+        Some(Color::new(1., 0.2, 1.)),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    );
     let shape = Sphere::new_boxed(None, Some(material));
 
     let light_position = Tuple::point(-10., 10., -10.);
@@ -57,5 +66,5 @@ fn main() {
         }
     }
 
-    println!("{}", ppm::canvas_to_ppm(canvas));
+    return canvas;
 }

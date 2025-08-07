@@ -67,6 +67,7 @@ impl Shape for Sphere {
 
     fn set_material(&mut self, m: Material) {
         self.material = m;
+        println!("Setting material {:?}", self);
     }
 
     fn local_normal_at(&self, &local_point: &Tuple) -> Tuple {

@@ -1,9 +1,9 @@
 extern crate the_ray_tracer_challenge_rust as tracer;
 use tracer::camera::Camera;
+use tracer::canvas::Canvas;
 use tracer::color::{Color, WHITE};
 use tracer::light::PointLight;
 use tracer::material::Material;
-use tracer::ppm;
 use tracer::sphere::Sphere;
 use tracer::transform;
 use tracer::transformation::view_transform;
@@ -12,7 +12,7 @@ use tracer::world::World;
 
 use std::f64;
 
-fn main() {
+pub fn ch8() -> Canvas {
     let floor_tr = transform::scaling(10., 0.01, 10.);
     let floor_m = Material::new(
         Some(Color::new(1., 0.9, 0.9)),
@@ -20,6 +20,9 @@ fn main() {
         None,
         None,
         Some(0.),
+        None,
+        None,
+        None,
         None,
     );
     let floor = Sphere::new_boxed(Some(floor_tr), Some(floor_m.clone()));
@@ -47,6 +50,9 @@ fn main() {
         Some(0.7),
         Some(0.3),
         None,
+        None,
+        None,
+        None,
     );
     let middle_sphere =
         Sphere::new_boxed(Some(transform::translation(-0.5, 1., 0.5)), Some(middle_m));
@@ -62,6 +68,9 @@ fn main() {
         Some(0.7),
         Some(0.3),
         None,
+        None,
+        None,
+        None,
     );
     let right_sphere = Sphere::new_boxed(Some(right_tr), Some(right_m));
 
@@ -75,6 +84,9 @@ fn main() {
         None,
         Some(0.7),
         Some(0.3),
+        None,
+        None,
+        None,
         None,
     );
     let left_sphere = Sphere::new_boxed(Some(left_tr), Some(left_m));
@@ -98,6 +110,5 @@ fn main() {
     let c_transform = view_transform(&c_from, &c_to, &c_up);
     let camera = Camera::new(300, 150, f64::consts::FRAC_PI_3, Some(c_transform));
 
-    let canvas = camera.render(&world);
-    println!("{}", ppm::canvas_to_ppm(canvas));
+    camera.render(&world)
 }

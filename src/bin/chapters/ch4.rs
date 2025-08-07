@@ -1,13 +1,12 @@
 extern crate the_ray_tracer_challenge_rust as tracer;
 use tracer::canvas::Canvas;
 use tracer::color;
-use tracer::ppm;
 use tracer::transform;
 use tracer::tuple::Tuple;
 
 use std::f64;
 
-fn main() {
+pub fn ch4() -> Canvas {
     const CANVAS_SIZE: usize = 200;
 
     let mut canvas = Canvas::new(CANVAS_SIZE, CANVAS_SIZE);
@@ -33,5 +32,5 @@ fn main() {
         }
     }
 
-    println!("{}", ppm::canvas_to_ppm(canvas));
+    return canvas;
 }

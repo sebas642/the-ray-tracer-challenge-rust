@@ -1,7 +1,6 @@
 extern crate the_ray_tracer_challenge_rust as tracer;
 use tracer::canvas::Canvas;
 use tracer::color;
-use tracer::ppm;
 use tracer::ray::Ray;
 use tracer::sphere::Sphere;
 use tracer::transform;
@@ -9,7 +8,7 @@ use tracer::tuple::Tuple;
 
 use std::f64;
 
-fn main() {
+pub fn ch5() -> Canvas {
     const CANVAS_SIZE: usize = 200;
 
     // The light is at z = -5
@@ -39,5 +38,5 @@ fn main() {
         }
     }
 
-    println!("{}", ppm::canvas_to_ppm(canvas));
+    return canvas;
 }
