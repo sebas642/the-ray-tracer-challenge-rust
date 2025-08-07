@@ -66,5 +66,5 @@ pub fn ch6() -> Canvas {
         }
     }
 
-    return canvas;
+    canvas
 }

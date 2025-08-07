@@ -49,7 +49,7 @@ impl World {
                 let reflectance = schlick(comps);
                 return surface + reflected * reflectance + refracted * (1. - reflectance);
             }
-            return surface + reflected + refracted;
+            surface + reflected + refracted
         } else {
             BLACK
         }
@@ -72,7 +72,7 @@ impl World {
         }
         let reflect_ray = Ray::new(&comps.over_point, &comps.reflectv);
         let color = self.color_at(&reflect_ray, remaining);
-        return color * comps.object.material().reflective;
+        color * comps.object.material().reflective
     }
 
     pub fn refracted_color(&self, comps: &Comps, remaining: u8) -> Color {
@@ -167,7 +167,7 @@ fn schlick(comps: &Comps) -> f64 {
     }
 
     let r0 = ((comps.n1 - comps.n2) / (comps.n1 + comps.n2)).powi(2);
-    return r0 + ((1. - r0) * (1. - cos).powi(5));
+    r0 + ((1. - r0) * (1. - cos).powi(5))
 }
 
 #[cfg(test)]

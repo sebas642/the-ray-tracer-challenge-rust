@@ -32,5 +32,5 @@ pub fn ch4() -> Canvas {
         }
     }
 
-    return canvas;
+    canvas
 }

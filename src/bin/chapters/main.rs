@@ -18,9 +18,8 @@ use crate::ch11::ch11;
 
 use std::{collections::HashMap, env, fs, process};
 
-fn print_usage(chapters: &Vec<i32>) {
-    eprintln!("Output a PPM image from chapters of the Ray Tracer Challenge");
-    eprintln!("");
+fn print_usage(chapters: &[i32]) {
+    eprintln!("Output a PPM image from chapters of the Ray Tracer Challenge\n");
     eprintln!("Usage: main [--output <file>] [--ch <chapter>]");
     eprintln!("  --output <file>   Write output to file instead of stdout");
     eprintln!(
@@ -71,8 +70,8 @@ fn main() {
                         print_usage(&valid_chapters);
                         process::exit(1);
                     });
-                    if chapters.get(&chapter).is_none() {
-                        eprintln!("Error: Invalid chapter {}", chapter);
+                    if !chapters.contains_key(&chapter) {
+                        eprintln!("Error: Invalid chapter {chapter}");
                         print_usage(&valid_chapters);
                         process::exit(1);
                     }
@@ -102,10 +101,10 @@ fn main() {
     if output_file.is_some() {
         let file_name = output_file.unwrap();
         fs::write(&file_name, ppm).unwrap_or_else(|err| {
-            eprintln!("Error writing to file {}: {}", file_name, err);
+            eprintln!("Error writing to file {file_name}: {err}");
             process::exit(1);
         });
     } else {
-        println!("{}", ppm);
+        println!("{ppm}");
     }
 }
